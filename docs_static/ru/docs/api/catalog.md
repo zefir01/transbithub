@@ -1,0 +1,919 @@
+title: API Transbithub каталог констант
+description: Списки значений для способов платежей, стран, валют и часовых поясов
+
+
+
+id: catalog
+title: Справочные значения
+sidebar_label: Справочные значения
+slug: /api/catalog
+
+
+### PaymentTypes
+- ADVCASH
+- CASH_AT_ATM
+- CASH_DEPOSIT
+- CASHU
+- CREDITCARD
+- INTERNATIONAL_WIRE_SWIFT
+- MONEYBOOKERS
+- MONEYGRAM
+- NATIONAL_BANK
+- NETELLER
+- OKPAY
+- OTHER_ONLINE_WALLET
+- OTHER_REMITTANCE
+- OTHER
+- PAXUM
+- PAYEER
+- PAYONEER
+- PAYPAL
+- PAYZA
+- PERFECT_MONEY
+- RIA
+- SOLIDTRUSTPAY
+- SPECIFIC_BANK
+- TRANSFERWISE
+- WEBMONEY
+- WECHAT
+- WORLDREMIT
+- WU
+- QIWI
+- TELE2
+- YANDEXMONEY
+- LYDIA
+- MOBILEPAY_DANSKE_BANK_DK
+- INTERAC
+- VANILLA
+- ALIPAY
+- ASTROPAY
+- BANK_TRANSFER_IMPS
+- BITMAIN_COUPON
+- CASHIERS_CHECK
+- CHASE_QUICKPAY
+- DWOLLA
+- EASYPAISA
+- ECOCASH
+- GOOGLEWALLET
+- HAL_CASH
+- HYPERWALLET
+- MOBILEPAY_DANSKE_BANK
+- MPESA_KENYA
+- MPESA_TANZANIA
+- PAYM
+- PAYPALMYCASH
+- PAYTM
+- PINGIT
+- PostePay
+- PYC
+- RELOADIT
+- SERVE2SERVE
+- SQUARE_CASH
+- SUPERFLASH
+- SWISH
+- TELEGRAMATIC_ORDER
+- TIGOPESA_TANZANIA
+- VENMO
+- VIPPS
+- WALMART2WALMART
+- XOOM
+- ZELLE
+- QIWI_TERMINAL
+
+### Countries
+- BD - Bangladesh
+- BE - Belgium
+- BF - Burkina Faso
+- BG - Bulgaria
+- BA - Bosnia and Herzegovina
+- BB - Barbados
+- WF - Wallis and Futuna
+- BL - Saint Barthelemy
+- BM - Bermuda
+- BN - Brunei
+- BO - Bolivia
+- BH - Bahrain
+- BI - Burundi
+- BJ - Benin
+- BT - Bhutan
+- JM - Jamaica
+- BV - Bouvet Island
+- BW - Botswana
+- WS - Samoa
+- BQ - Bonaire, Saint Eustatius and Saba 
+- BR - Brazil
+- BS - Bahamas
+- JE - Jersey
+- BY - Belarus
+- BZ - Belize
+- RU - Russia
+- RW - Rwanda
+- RS - Serbia
+- TL - East Timor
+- RE - Reunion
+- TM - Turkmenistan
+- TJ - Tajikistan
+- RO - Romania
+- TK - Tokelau
+- GW - Guinea-Bissau
+- GU - Guam
+- GT - Guatemala
+- GS - South Georgia and the South Sandwich Islands
+- GR - Greece
+- GQ - Equatorial Guinea
+- GP - Guadeloupe
+- JP - Japan
+- GY - Guyana
+- GG - Guernsey
+- GF - French Guiana
+- GE - Georgia
+- GD - Grenada
+- GB - United Kingdom
+- GA - Gabon
+- SV - El Salvador
+- GN - Guinea
+- GM - Gambia
+- GL - Greenland
+- GI - Gibraltar
+- GH - Ghana
+- OM - Oman
+- TN - Tunisia
+- JO - Jordan
+- HR - Croatia
+- HT - Haiti
+- HU - Hungary
+- HK - Hong Kong
+- HN - Honduras
+- HM - Heard Island and McDonald Islands
+- VE - Venezuela
+- PR - Puerto Rico
+- PS - Palestinian Territory
+- PW - Palau
+- PT - Portugal
+- SJ - Svalbard and Jan Mayen
+- PY - Paraguay
+- IQ - Iraq
+- PA - Panama
+- PF - French Polynesia
+- PG - Papua New Guinea
+- PE - Peru
+- PK - Pakistan
+- PH - Philippines
+- PN - Pitcairn
+- PL - Poland
+- PM - Saint Pierre and Miquelon
+- ZM - Zambia
+- EH - Western Sahara
+- EE - Estonia
+- EG - Egypt
+- ZA - South Africa
+- EC - Ecuador
+- IT - Italy
+- VN - Vietnam
+- SB - Solomon Islands
+- ET - Ethiopia
+- SO - Somalia
+- ZW - Zimbabwe
+- SA - Saudi Arabia
+- ES - Spain
+- ER - Eritrea
+- ME - Montenegro
+- MD - Moldova
+- MG - Madagascar
+- MF - Saint Martin
+- MA - Morocco
+- MC - Monaco
+- UZ - Uzbekistan
+- MM - Myanmar
+- ML - Mali
+- MO - Macao
+- MN - Mongolia
+- MH - Marshall Islands
+- MK - Macedonia
+- MU - Mauritius
+- MT - Malta
+- MW - Malawi
+- MV - Maldives
+- MQ - Martinique
+- MP - Northern Mariana Islands
+- MS - Montserrat
+- MR - Mauritania
+- IM - Isle of Man
+- UG - Uganda
+- TZ - Tanzania
+- MY - Malaysia
+- MX - Mexico
+- IL - Israel
+- FR - France
+- IO - British Indian Ocean Territory
+- SH - Saint Helena
+- FI - Finland
+- FJ - Fiji
+- FK - Falkland Islands
+- FM - Micronesia
+- FO - Faroe Islands
+- NI - Nicaragua
+- NL - Netherlands
+- NO - Norway
+- NA - Namibia
+- VU - Vanuatu
+- NC - New Caledonia
+- NE - Niger
+- NF - Norfolk Island
+- NG - Nigeria
+- NZ - New Zealand
+- NP - Nepal
+- NR - Nauru
+- NU - Niue
+- CK - Cook Islands
+- XK - Kosovo
+- CI - Ivory Coast
+- CH - Switzerland
+- CO - Colombia
+- CN - China
+- CM - Cameroon
+- CL - Chile
+- CC - Cocos Islands
+- CA - Canada
+- CG - Republic of the Congo
+- CF - Central African Republic
+- CD - Democratic Republic of the Congo
+- CZ - Czech Republic
+- CY - Cyprus
+- CX - Christmas Island
+- CR - Costa Rica
+- CW - Curacao
+- CV - Cape Verde
+- CU - Cuba
+- SZ - Swaziland
+- SY - Syria
+- SX - Sint Maarten
+- KG - Kyrgyzstan
+- KE - Kenya
+- SS - South Sudan
+- SR - Suriname
+- KI - Kiribati
+- KH - Cambodia
+- KN - Saint Kitts and Nevis
+- KM - Comoros
+- ST - Sao Tome and Principe
+- SK - Slovakia
+- KR - South Korea
+- SI - Slovenia
+- KP - North Korea
+- KW - Kuwait
+- SN - Senegal
+- SM - San Marino
+- SL - Sierra Leone
+- SC - Seychelles
+- KZ - Kazakhstan
+- KY - Cayman Islands
+- SG - Singapore
+- SE - Sweden
+- SD - Sudan
+- DO - Dominican Republic
+- DM - Dominica
+- DJ - Djibouti
+- DK - Denmark
+- VG - British Virgin Islands
+- DE - Germany
+- YE - Yemen
+- DZ - Algeria
+- US - United States
+- UY - Uruguay
+- YT - Mayotte
+- UM - United States Minor Outlying Islands
+- LB - Lebanon
+- LC - Saint Lucia
+- LA - Laos
+- TV - Tuvalu
+- TW - Taiwan
+- TT - Trinidad and Tobago
+- TR - Turkey
+- LK - Sri Lanka
+- LI - Liechtenstein
+- LV - Latvia
+- TO - Tonga
+- LT - Lithuania
+- LU - Luxembourg
+- LR - Liberia
+- LS - Lesotho
+- TH - Thailand
+- TF - French Southern Territories
+- TG - Togo
+- TD - Chad
+- TC - Turks and Caicos Islands
+- LY - Libya
+- VA - Vatican
+- VC - Saint Vincent and the Grenadines
+- AE - United Arab Emirates
+- AD - Andorra
+- AG - Antigua and Barbuda
+- AF - Afghanistan
+- AI - Anguilla
+- VI - U.S. Virgin Islands
+- IS - Iceland
+- IR - Iran
+- AM - Armenia
+- AL - Albania
+- AO - Angola
+- AS - American Samoa
+- AR - Argentina
+- AU - Australia
+- AT - Austria
+- AW - Aruba
+- IN - India
+- AX - Aland Islands
+- AZ - Azerbaijan
+- IE - Ireland
+- ID - Indonesia
+- UA - Ukraine
+- QA - Qatar
+- MZ - Mozambique
+
+
+### Currencies
+- ANG
+- USD
+- BDT
+- EUR
+- XOF
+- BGN
+- BAM
+- BBD
+- XPF
+- BMD
+- BND
+- BOB
+- BHD
+- BIF
+- BTN
+- JMD
+- NOK
+- BWP
+- WST
+- BRL
+- BSD
+- GBP
+- BYR
+- BZD
+- RUB
+- RWF
+- RSD
+- TMT
+- TJS
+- RON
+- NZD
+- GTQ
+- XAF
+- JPY
+- GYD
+- GEL
+- XCD
+- GNF
+- GMD
+- DKK
+- GIP
+- GHS
+- OMR
+- TND
+- JOD
+- HRK
+- HTG
+- HUF
+- HKD
+- HNL
+- AUD
+- VEF
+- ILS
+- PYG
+- IQD
+- PAB
+- PGK
+- PEN
+- PKR
+- PHP
+- PLN
+- ZMK
+- MAD
+- EGP
+- ZAR
+- VND
+- SBD
+- ETB
+- SOS
+- ZWL
+- SAR
+- ERN
+- MDL
+- MGA
+- UZS
+- MMK
+- MOP
+- MNT
+- MKD
+- MUR
+- MWK
+- MVR
+- MRO
+- UGX
+- TZS
+- MYR
+- MXN
+- SHP
+- FJD
+- FKP
+- NIO
+- NAD
+- VUV
+- NGN
+- NPR
+- CHF
+- COP
+- CNY
+- CLP
+- CAD
+- CDF
+- CZK
+- CRC
+- CVE
+- CUP
+- SZL
+- SYP
+- KGS
+- KES
+- SSP
+- SRD
+- KHR
+- KMF
+- STD
+- KRW
+- KPW
+- KWD
+- SLL
+- SCR
+- KZT
+- KYD
+- SGD
+- SEK
+- SDG
+- DOP
+- DJF
+- YER
+- DZD
+- UYU
+- LBP
+- LAK
+- TWD
+- TTD
+- TRY
+- LKR
+- TOP
+- LTL
+- LRD
+- LSL
+- THB
+- LYD
+- AED
+- AFN
+- ISK
+- IRR
+- AMD
+- ALL
+- AOA
+- ARS
+- AWG
+- INR
+- AZN
+- IDR
+- UAH
+- QAR
+- MZN
+
+### TimeZones
+- Pacific/Niue
+- Pacific/Pago_Pago
+- Pacific/Midway
+- Pacific/Honolulu
+- America/Adak
+- Pacific/Rarotonga
+- Pacific/Tahiti
+- Pacific/Marquesas
+- America/Metlakatla
+- America/Sitka
+- America/Juneau
+- America/Anchorage
+- America/Yakutat
+- America/Nome
+- Pacific/Gambier
+- Pacific/Pitcairn
+- America/Dawson
+- America/Tijuana
+- America/Whitehorse
+- America/Vancouver
+- America/Los_Angeles
+- America/Edmonton
+- America/Cambridge_Bay
+- America/Yellowknife
+- America/Inuvik
+- America/Fort_Nelson
+- America/Dawson_Creek
+- America/Phoenix
+- America/Ojinaga
+- America/Denver
+- America/Creston
+- America/Boise
+- America/Hermosillo
+- America/Mazatlan
+- America/Chihuahua
+- Pacific/Galapagos
+- Pacific/Easter
+- America/Managua
+- America/El_Salvador
+- America/Swift_Current
+- America/Regina
+- America/Matamoros
+- America/Bahia_Banderas
+- America/Chicago
+- America/Monterrey
+- America/Indiana/Tell_City
+- America/Mexico_City
+- America/Rankin_Inlet
+- America/Indiana/Knox
+- America/Menominee
+- America/North_Dakota/Center
+- America/North_Dakota/New_Salem
+- America/North_Dakota/Beulah
+- America/Merida
+- America/Resolute
+- America/Costa_Rica
+- America/Rainy_River
+- America/Winnipeg
+- America/Belize
+- America/Tegucigalpa
+- America/Guatemala
+- America/Rio_Branco
+- America/Eirunepe
+- America/Kentucky/Monticello
+- America/Indiana/Winamac
+- America/Indiana/Indianapolis
+- America/Panama
+- America/Toronto
+- America/Nipigon
+- America/Thunder_Bay
+- America/Iqaluit
+- America/Pangnirtung
+- America/Atikokan
+- America/Detroit
+- America/New_York
+- America/Cayman
+- America/Jamaica
+- America/Port-au-Prince
+- America/Kentucky/Louisville
+- America/Indiana/Vincennes
+- America/Grand_Turk
+- America/Nassau
+- America/Cancun
+- America/Indiana/Vevay
+- America/Indiana/Petersburg
+- America/Indiana/Marengo
+- America/Bogota
+- America/Havana
+- America/Lima
+- America/Guayaquil
+- America/Campo_Grande
+- America/Manaus
+- America/Boa_Vista
+- America/Cuiaba
+- America/Porto_Velho
+- America/Aruba
+- America/Curacao
+- America/Glace_Bay
+- America/Anguilla
+- America/St_Kitts
+- America/Halifax
+- America/St_Vincent
+- America/Barbados
+- America/Grenada
+- America/Santo_Domingo
+- America/Dominica
+- America/Puerto_Rico
+- America/Marigot
+- America/Montserrat
+- America/St_Lucia
+- America/Moncton
+- America/Port_of_Spain
+- America/Lower_Princes
+- America/Tortola
+- America/Thule
+- America/Martinique
+- America/Antigua
+- America/St_Thomas
+- America/Guadeloupe
+- America/Blanc-Sablon
+- Atlantic/Bermuda
+- America/St_Barthelemy
+- America/Goose_Bay
+- America/Kralendijk
+- America/La_Paz
+- America/Caracas
+- America/Guyana
+- America/Asuncion
+- America/Santiago
+- America/St_Johns
+- Antarctica/Palmer
+- America/Punta_Arenas
+- America/Argentina/Salta
+- America/Argentina/Cordoba
+- America/Argentina/Buenos_Aires
+- America/Argentina/Rio_Gallegos
+- America/Argentina/Mendoza
+- America/Argentina/San_Juan
+- America/Argentina/La_Rioja
+- America/Argentina/Catamarca
+- America/Argentina/Ushuaia
+- America/Argentina/Jujuy
+- America/Argentina/Tucuman
+- America/Recife
+- America/Sao_Paulo
+- America/Bahia
+- America/Maceio
+- America/Araguaina
+- America/Fortaleza
+- America/Belem
+- America/Santarem
+- America/Argentina/San_Luis
+- America/Godthab
+- Antarctica/Rothera
+- America/Miquelon
+- America/Paramaribo
+- America/Montevideo
+- Atlantic/Stanley
+- America/Cayenne
+- America/Noronha
+- Atlantic/South_Georgia
+- Atlantic/Azores
+- America/Scoresbysund
+- Atlantic/Cape_Verde
+- UTC
+- Europe/Lisbon
+- Atlantic/Faroe
+- Atlantic/Madeira
+- Atlantic/Canary
+- Europe/Guernsey
+- Atlantic/Reykjavik
+- Africa/Dakar
+- Africa/Bamako
+- Africa/Sao_Tome
+- Africa/Nouakchott
+- Africa/Ouagadougou
+- Europe/Jersey
+- Atlantic/St_Helena
+- Africa/Bissau
+- Antarctica/Troll
+- Africa/Lome
+- Africa/Abidjan
+- Africa/Monrovia
+- Africa/Conakry
+- Africa/Banjul
+- Europe/London
+- America/Danmarkshavn
+- Africa/Accra
+- Africa/Freetown
+- Europe/Isle_of_Man
+- Africa/Brazzaville
+- Africa/Bangui
+- Africa/Kinshasa
+- Africa/Douala
+- Africa/Lagos
+- Africa/Niamey
+- Africa/Libreville
+- Africa/Ndjamena
+- Africa/Malabo
+- Africa/Luanda
+- Africa/Porto-Novo
+- Africa/El_Aaiun
+- Africa/Casablanca
+- Europe/Dublin
+- Europe/Prague
+- Europe/Vaduz
+- Europe/Andorra
+- Europe/Tirane
+- Europe/Luxembourg
+- Europe/Zurich
+- Europe/Podgorica
+- Europe/Vatican
+- Europe/Vienna
+- Europe/Sarajevo
+- Europe/Brussels
+- Europe/Skopje
+- Europe/Malta
+- Europe/Oslo
+- Europe/Amsterdam
+- Europe/Monaco
+- Europe/Warsaw
+- Europe/Copenhagen
+- Europe/Busingen
+- Europe/Gibraltar
+- Europe/Paris
+- Africa/Tunis
+- Europe/Zagreb
+- Africa/Ceuta
+- Europe/Budapest
+- Europe/Madrid
+- Europe/San_Marino
+- Europe/Bratislava
+- Arctic/Longyearbyen
+- Europe/Berlin
+- Europe/Ljubljana
+- Europe/Stockholm
+- Europe/Rome
+- Europe/Belgrade
+- Africa/Algiers
+- Asia/Famagusta
+- Europe/Kaliningrad
+- Europe/Zaporozhye
+- Asia/Beirut
+- Europe/Athens
+- Asia/Damascus
+- Europe/Helsinki
+- Europe/Mariehamn
+- Europe/Kiev
+- Asia/Gaza
+- Asia/Hebron
+- Europe/Chisinau
+- Europe/Tallinn
+- Europe/Uzhgorod
+- Europe/Vilnius
+- Africa/Cairo
+- Europe/Riga
+- Africa/Tripoli
+- Asia/Amman
+- Europe/Bucharest
+- Europe/Sofia
+- Asia/Nicosia
+- Asia/Jerusalem
+- Africa/Windhoek
+- Africa/Maputo
+- Africa/Khartoum
+- Africa/Kigali
+- Africa/Harare
+- Africa/Blantyre
+- Africa/Lusaka
+- Africa/Bujumbura
+- Africa/Gaborone
+- Africa/Lubumbashi
+- Africa/Mbabane
+- Africa/Johannesburg
+- Africa/Maseru
+- Europe/Kirov
+- Europe/Istanbul
+- Africa/Dar_es_Salaam
+- Africa/Addis_Ababa
+- Indian/Antananarivo
+- Africa/Asmara
+- Africa/Djibouti
+- Africa/Juba
+- Africa/Mogadishu
+- Africa/Nairobi
+- Indian/Comoro
+- Indian/Mayotte
+- Africa/Kampala
+- Europe/Moscow
+- Europe/Simferopol
+- Europe/Minsk
+- Asia/Kuwait
+- Asia/Qatar
+- Asia/Riyadh
+- Asia/Baghdad
+- Asia/Aden
+- Asia/Bahrain
+- Antarctica/Syowa
+- Asia/Tehran
+- Europe/Astrakhan
+- Europe/Ulyanovsk
+- Europe/Saratov
+- Asia/Baku
+- Asia/Yerevan
+- Asia/Tbilisi
+- Indian/Mauritius
+- Europe/Volgograd
+- Asia/Dubai
+- Asia/Muscat
+- Indian/Reunion
+- Europe/Samara
+- Indian/Mahe
+- Asia/Kabul
+- Asia/Qyzylorda
+- Asia/Yekaterinburg
+- Asia/Aqtobe
+- Asia/Aqtau
+- Asia/Oral
+- Asia/Atyrau
+- Indian/Maldives
+- Antarctica/Mawson
+- Asia/Karachi
+- Asia/Dushanbe
+- Asia/Ashgabat
+- Asia/Tashkent
+- Asia/Samarkand
+- Indian/Kerguelen
+- Asia/Kolkata
+- Asia/Colombo
+- Asia/Kathmandu
+- Asia/Qostanay
+- Asia/Urumqi
+- Asia/Dhaka
+- Asia/Thimphu
+- Antarctica/Vostok
+- Asia/Almaty
+- Indian/Chagos
+- Asia/Bishkek
+- Asia/Omsk
+- Indian/Cocos
+- Asia/Yangon
+- Asia/Barnaul
+- Asia/Tomsk
+- Antarctica/Davis
+- Asia/Jakarta
+- Asia/Pontianak
+- Asia/Phnom_Penh
+- Asia/Vientiane
+- Asia/Ho_Chi_Minh
+- Asia/Bangkok
+- Asia/Novokuznetsk
+- Asia/Krasnoyarsk
+- Asia/Novosibirsk
+- Asia/Hovd
+- Indian/Christmas
+- Asia/Brunei
+- Asia/Hong_Kong
+- Australia/Perth
+- Asia/Irkutsk
+- Antarctica/Casey
+- Asia/Macau
+- Asia/Shanghai
+- Asia/Kuching
+- Asia/Kuala_Lumpur
+- Asia/Singapore
+- Asia/Taipei
+- Asia/Ulaanbaatar
+- Asia/Manila
+- Asia/Makassar
+- Asia/Choibalsan
+- Australia/Eucla
+- Asia/Jayapura
+- Asia/Dili
+- Asia/Seoul
+- Pacific/Palau
+- Asia/Pyongyang
+- Asia/Chita
+- Asia/Yakutsk
+- Asia/Khandyga
+- Asia/Tokyo
+- Australia/Broken_Hill
+- Australia/Darwin
+- Australia/Adelaide
+- Asia/Vladivostok
+- Asia/Ust-Nera
+- Australia/Hobart
+- Australia/Currie
+- Australia/Melbourne
+- Australia/Sydney
+- Australia/Brisbane
+- Australia/Lindeman
+- Antarctica/DumontDUrville
+- Pacific/Port_Moresby
+- Pacific/Chuuk
+- Pacific/Guam
+- Pacific/Saipan
+- Australia/Lord_Howe
+- Asia/Srednekolymsk
+- Pacific/Bougainville
+- Pacific/Efate
+- Pacific/Kosrae
+- Asia/Magadan
+- Antarctica/Macquarie
+- Pacific/Noumea
+- Pacific/Norfolk
+- Pacific/Pohnpei
+- Asia/Sakhalin
+- Pacific/Guadalcanal
+- Asia/Anadyr
+- Pacific/Kwajalein
+- Pacific/Majuro
+- Pacific/Nauru
+- Pacific/Auckland
+- Antarctica/McMurdo
+- Asia/Kamchatka
+- Pacific/Funafuti
+- Pacific/Wallis
+- Pacific/Wake
+- Pacific/Fiji
+- Pacific/Tarawa
+- Pacific/Chatham
+- Pacific/Apia
+- Pacific/Fakaofo
+- Pacific/Tongatapu
+- Pacific/Enderbury
+- Pacific/Kiritimati

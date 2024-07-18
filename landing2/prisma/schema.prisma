@@ -1,0 +1,96 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model EFMigrationsHistory {
+  MigrationId    String @id @db.VarChar(150)
+  ProductVersion String @db.VarChar(32)
+
+  @@map("__EFMigrationsHistory")
+}
+
+model ad {
+  id                     BigInt    @id @default(autoincrement())
+  ad_id                  BigInt
+  country                Int?
+  is_buy                 Boolean
+  payment_type           Int
+  fiat_currency          Int
+  min_amount             Decimal   @db.Decimal
+  max_amount             Decimal   @db.Decimal
+  created_at             DateTime  @db.Timestamp(6)
+  owner_id               BigInt
+  disabled_at            DateTime? @db.Timestamp(6)
+  price                  Decimal   @db.Decimal
+  terms                  String
+  city                   String?
+  updated_at             DateTime  @db.Timestamp(6)
+  price_updated_at       DateTime  @db.Timestamp(6)
+  window                 Int?
+  crypto_currency        Int
+  source_type            Int
+  bank_name              String?
+  require_feedback_score Decimal?  @db.Decimal
+  require_trade_volume   Decimal?  @db.Decimal
+  px_ad_id               String?
+  trader                 trader    @relation(fields: [owner_id], references: [id])
+
+  @@index([ad_id], name: "ix_ad_ad_id")
+  @@index([owner_id], name: "ix_ad_owner_id")
+}
+
+model bz_params {
+  id               BigInt   @id @default(autoincrement())
+  last_full_update DateTime @db.Timestamp(6)
+}
+
+model bz_trader_volumes {
+  id              BigInt          @id @default(autoincrement())
+  crypto_currency Int
+  amount          Decimal         @db.Decimal
+  deals_count     BigInt
+  snapshot_id     BigInt
+  trader_snapshot trader_snapshot @relation(fields: [snapshot_id], references: [id])
+
+  @@index([snapshot_id], name: "ix_bz_trader_volumes_snapshot_id")
+}
+
+model trader {
+  id              BigInt            @id @default(autoincrement())
+  name            String
+  created_at      DateTime          @db.Timestamp(6)
+  last_activity   DateTime          @db.Timestamp(6)
+  updated_at      DateTime          @db.Timestamp(6)
+  registered_at   DateTime?         @db.Timestamp(6)
+  source_type     Int
+  verified        Boolean?
+  ad              ad[]
+  trader_snapshot trader_snapshot[]
+}
+
+model trader_snapshot {
+  id                 BigInt              @id @default(autoincrement())
+  trades_count       Int
+  rating             Decimal             @db.Decimal
+  positive_feedbacks Int
+  negative_feedbacks Int
+  completed_deals    Int
+  canceled_deals     Int
+  trusted_count      Int
+  blocked_count      Int
+  amount             Decimal?            @db.Decimal
+  created_at         DateTime            @db.Timestamp(6)
+  owner_id           BigInt
+  source_type        Int
+  dispute_loose      Int?
+  partners           Int?
+  trader             trader              @relation(fields: [owner_id], references: [id])
+  bz_trader_volumes  bz_trader_volumes[]
+
+  @@index([owner_id], name: "ix_trader_snapshot_owner_id")
+}

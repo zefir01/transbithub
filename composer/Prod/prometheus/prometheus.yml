@@ -1,0 +1,116 @@
+global:
+  scrape_interval:     30s # By default, scrape targets every 15 seconds.
+
+  # Attach these labels to any time series or alerts when communicating with
+  # external systems (federation, remote storage, Alertmanager).
+  external_labels:
+    monitor: 'codelab-monitor'
+
+# A scrape configuration containing exactly one endpoint to scrape:
+# Here it's Prometheus itself.
+scrape_configs:
+  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+  - job_name: 'prometheus'
+    # Override the global default and scrape targets from this job every 5 seconds.
+    static_configs:
+      - targets: ['localhost:9090']
+  
+  - job_name: 'btc-core'
+    static_configs:
+      - targets: [ 'bitcoind-exporter:8334' ]
+
+#https://github.com/lightningd/plugins/tree/master/prometheus
+  - job_name: 'lnd'
+    static_configs:
+      - targets: [ 'lndmon:9092' ]
+
+  - job_name: 'postgres-data'
+    static_configs:
+      - targets: [ 'postgres-exporter-data:9187' ]
+
+  - job_name: 'postgres-identity'
+    static_configs:
+      - targets: [ 'postgres-exporter-identity:9187' ]
+
+  - job_name: 'postgres-telegram'
+    static_configs:
+      - targets: [ 'postgres-exporter-telegram:9187' ]
+
+  - job_name: 'postgres-jira'
+    static_configs:
+      - targets: [ 'postgres-exporter-jira:9187' ]
+
+  - job_name: 'postgres-data-backup'
+    static_configs:
+      - targets: [ '10.1.0.2:9187' ]
+
+  - job_name: 'postgres-identity-backup'
+    static_configs:
+      - targets: [ '10.1.0.2:9188' ]
+
+  - job_name: 'postgres-telegram-backup'
+    static_configs:
+      - targets: [ '10.1.0.2:9189' ]
+
+  - job_name: 'postgres-jira-backup'
+    static_configs:
+      - targets: [ '10.1.0.2:9190' ]
+
+  - job_name: 'master-node'
+    static_configs:
+      - targets: [ 'node_exporter:9100' ]
+  - job_name: 'backup-node'
+    static_configs:
+      - targets: [ '10.1.0.2:9100' ]
+  - job_name: 'front-node'
+    static_configs:
+      - targets: [ '10.1.0.10:9100' ]
+
+  - job_name: 'master-docker'
+    static_configs:
+      - targets: [ 'docker-exporter:9104' ]
+  - job_name: 'backup-docker'
+    static_configs:
+      - targets: [ '10.1.0.2:9104' ]
+  - job_name: 'front-docker'
+    static_configs:
+      - targets: [ '10.1.0.10:9104' ]
+  - job_name: 'ping-exporter'
+    static_configs:
+      - targets: [ 'ping-exporter:9427' ]
+
+  - job_name: 'prod-envoy-front'
+    metrics_path: '/front-prod/stats'
+    params:
+      format: [ 'prometheus' ]
+    scrape_interval: 15s
+    scrape_timeout: 15s
+    static_configs:
+      - targets: [ 'envoy:1001' ]
+
+  - job_name: 'prod-envoy-master'
+    metrics_path: '/stats'
+    params:
+      format: [ 'prometheus' ]
+    scrape_interval: 15s
+    scrape_timeout: 15s
+    static_configs:
+      - targets: [ 'envoy:9901' ]
+
+  - job_name: 'test-envoy-front'
+    metrics_path: '/front-test/stats'
+    params:
+      format: [ 'prometheus' ]
+    scrape_interval: 15s
+    scrape_timeout: 15s
+    static_configs:
+      - targets: [ 'envoy:1001' ]
+
+  - job_name: 'test-envoy-master'
+    metrics_path: '/stats'
+    params:
+      format: [ 'prometheus' ]
+    scrape_interval: 15s
+    scrape_timeout: 15s
+    static_configs:
+      - targets: [ '172.18.0.1:9902' ]

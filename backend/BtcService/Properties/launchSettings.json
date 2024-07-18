@@ -1,0 +1,25 @@
+﻿{
+  "profiles": {
+    "BtcService": {
+      "commandName": "Project",
+      "launchBrowser": false,
+      "applicationUrl": "https://localhost:5001",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "DATA_HOST": "postgres-data",
+        "DATA_PORT": "5432",
+        "DATA_DB": "globalbitcoins_data",
+        "DATA_USER": "globalbitcoins",
+        "DATA_PASS": "globalbitcoins",
+        "BTC_URL": "http://btc-core:18334",
+        "BTC_USER": "MyRpcUsername",
+        "BTC_PASS": "MyRpcPassword",
+        "NATS_URL": "nats://nats:4222",
+        "TZ": "Etc/UTC",
+        "LOG_LEVEL": "Warning",
+        "FLUENTD_HOST": "fluentd",
+        "FLUENTD_UDP_PORT": "20001"
+      }
+    }
+  }
+}

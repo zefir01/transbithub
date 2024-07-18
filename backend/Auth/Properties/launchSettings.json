@@ -1,0 +1,29 @@
+﻿{
+  "profiles": {
+    "Auth": {
+      "commandName": "Project",
+      "launchBrowser": false,
+      "applicationUrl": "https://localhost:5001",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "IDENTITY_HOST": "postgres-identity",
+        "IDENTITY_PORT": "5432",
+        "IDENTITY_DB": "globalbitcoins_identity",
+        "IDENTITY_USER": "globalbitcoins",
+        "IDENTITY_PASS": "globalbitcoins",
+        "MIGRATE": "false",
+        "SMTP_SERVER": "mail",
+        "SMTP_PORT": "25",
+        "SMTP_USER": "support",
+        "SMTP_PASS": "batman",
+        "SMTP_FROM": "support@envoy.docker",
+        "SITE_NAME": "fancrypto.ru",
+        "PROXY_USER": "jfszfb",
+        "PROXY_PASS": "AMhIKVNR04",
+        "PROXY_URL": "http://45.91.54.136:24531",
+        "TZ": "Etc/UTC",
+        "LOG_LEVEL": "Warning"
+      }
+    }
+  }
+}

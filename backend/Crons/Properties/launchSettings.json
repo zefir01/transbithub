@@ -1,0 +1,35 @@
+﻿{
+  "profiles": {
+    "Crons": {
+      "commandName": "Project",
+      "launchBrowser": false,
+      "applicationUrl": "https://localhost:5001",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "DATA_HOST": "postgres-data",
+        "DATA_PORT": "5432",
+        "DATA_DB": "globalbitcoins_data",
+        "DATA_USER": "globalbitcoins",
+        "DATA_PASS": "globalbitcoins",
+        "NATS_URL": "nats://nats:4222",
+        "RATES_TOKEN": "bff092351f8bbbe8255cf862",
+        "PROXY_USER": "jfszfb",
+        "PROXY_PASS": "AMhIKVNR04",
+        "PROXY_URL": "http://45.91.54.136:24531",
+        "SMTP_SERVER": "mail",
+        "SMTP_PORT": "25",
+        "SMTP_USER": "support",
+        "SMTP_PASS": "batman",
+        "SMTP_FROM": "support@envoy.docker",
+        "AUTH_HOST": "auth",
+        "AUTH_HTTP_PORT": "5001",
+        "AUTH_HTTP2_PORT": "5002",
+        "BTC_SERVICE_URL": "http://btc-service:50060",
+        "TZ": "Etc/UTC",
+        "LOG_LEVEL": "Debug",
+        "LND_URL": "lnd:10009",
+        "RATES_DELAY_MINUTES": "60"
+      }
+    }
+  }
+}

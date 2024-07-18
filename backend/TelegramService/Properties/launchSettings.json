@@ -1,0 +1,27 @@
+﻿{
+  "profiles": {
+    "TelegramService": {
+      "commandName": "Project",
+      "launchBrowser": false,
+      "applicationUrl": "https://localhost:5001",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "TELEGRAM_HOST": "postgres-telegram",
+        "TELEGRAM_PORT": "5432",
+        "TELEGRAM_DB": "globalbitcoins_telegram",
+        "TELEGRAM_USER": "globalbitcoins",
+        "TELEGRAM_PASS": "globalbitcoins",
+        "NATS_URL": "nats://nats:4222",
+        "TELEGRAM_TOKEN": "1137067451:AAHaLxdL2HnMZzTNX_uJxDkXmaHwzXOz1sA",
+        "AUTH_HOST": "localhost",
+        "AUTH_HOST_INTERNAL": "localhost",
+        "AUTH_HTTP2_PORT_INTERNAL": "5002",
+        "AUTH_HTTP_PORT": "5001",
+        "BACKEND_GRPC_URL": "https://fancrypto.ru:443",
+        "SITE_NAME": "fancrypto.ru",
+        "TZ": "Etc/UTC",
+        "LOG_LEVEL": "Warning"
+      }
+    }
+  }
+}

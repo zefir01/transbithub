@@ -1,0 +1,212 @@
+version: '3.8'
+
+x-x:
+  LN_DB: &ln-db-user-pass "lightningd"
+  DB_PASS: &db-user-pass "globalbitcoins"
+
+x-common-postgres-variables: &common-postgres-variables
+  POSTGRESQL_POSTGRES_PASSWORD: "Batman01"
+  POSTGRESQL_REPLICATION_MODE: "slave"
+  POSTGRESQL_REPLICATION_USER: "repl_user"
+  POSTGRESQL_REPLICATION_PASSWORD: "repl_password"
+  POSTGRESQL_MASTER_HOST: "10.1.0.1"
+  ALLOW_EMPTY_PASSWORD: "no"
+
+services:
+  postgres-identity:
+    image: bitnami/postgresql:13-debian-10
+    restart: always
+    environment:
+      <<: *common-postgres-variables
+      POSTGRESQL_USERNAME: *db-user-pass
+      POSTGRESQL_PASSWORD: *db-user-pass
+      POSTGRESQL_DATABASE: "identity"
+
+      POSTGRESQL_MASTER_PORT_NUMBER: "5433"
+    configs:
+      - source: postgres-identity
+        target: /bitnami/postgresql/conf/postgresql.conf
+    volumes:
+      - postgres_identity:/bitnami/postgresql
+    ports:
+      - "5433:5432"
+
+  postgres-telegram:
+    image: bitnami/postgresql:13-debian-10
+    restart: always
+    environment:
+      <<: *common-postgres-variables
+      POSTGRESQL_USERNAME: *db-user-pass
+      POSTGRESQL_PASSWORD: *db-user-pass
+      POSTGRESQL_DATABASE: "telegram"
+
+      POSTGRESQL_MASTER_PORT_NUMBER: "5435"
+    configs:
+      - source: postgres-telegram
+        target: /bitnami/postgresql/conf/postgresql.conf
+    volumes:
+      - postgres_telegram:/bitnami/postgresql
+    ports:
+      - "5435:5432"
+
+  postgres-jira:
+    image: bitnami/postgresql:13-debian-10
+    restart: always
+    environment:
+      <<: *common-postgres-variables
+      POSTGRESQL_USERNAME: "jira"
+      POSTGRESQL_PASSWORD: "jira"
+      POSTGRESQL_DATABASE: "jira"
+
+      POSTGRESQL_MASTER_PORT_NUMBER: "5436"
+    configs:
+      - source: postgres-jira
+        target: /bitnami/postgresql/conf/postgresql.conf
+    volumes:
+      - postgres_jira:/bitnami/postgresql
+    ports:
+      - "5436:5432"
+
+  postgres-data:
+    image: bitnami/postgresql:13-debian-10
+    restart: always
+    environment:
+      <<: *common-postgres-variables
+      POSTGRESQL_USERNAME: *db-user-pass
+      POSTGRESQL_PASSWORD: *db-user-pass
+      POSTGRESQL_DATABASE: "data"
+
+      POSTGRESQL_MASTER_PORT_NUMBER: "5434"
+    configs:
+      - source: postgres-data
+        target: /bitnami/postgresql/conf/postgresql.conf
+    volumes:
+      - postgres_data:/bitnami/postgresql
+    ports:
+      - "5434:5432"
+
+
+  elasticsearch:
+    restart: always
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.2
+    ports:
+      - "9200:9200"
+    environment:
+      - discovery.type=single-node
+      - node.name=elasticsearch
+      - bootstrap.memory_lock=false
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    volumes:
+      - elastic:/usr/share/elasticsearch/data
+
+  kibana:
+    restart: always
+    image: docker.elastic.co/kibana/kibana:7.10.2
+    ports:
+      - "5601:5601"
+    environment:
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+      XPACK_SECURITY_ENABLED: 'false'
+
+  postgres-exporter-data:
+    restart: always
+    image: wrouesnel/postgres_exporter
+    environment:
+      DATA_SOURCE_NAME: "postgresql://postgres:Batman01@postgres-data:5432/data?sslmode=disable"
+      PG_EXPORTER_EXTEND_QUERY_PATH: "/queries.yaml"
+    configs:
+      - source: postgres-exporter-queries
+        target: /queries.yaml
+    ports:
+      - "9187:9187"
+  postgres-exporter-identity:
+    restart: always
+    image: wrouesnel/postgres_exporter
+    environment:
+      DATA_SOURCE_NAME: "postgresql://postgres:Batman01@postgres-identity:5432/identity?sslmode=disable"
+      PG_EXPORTER_EXTEND_QUERY_PATH: "/queries.yaml"
+    configs:
+      - source: postgres-exporter-queries
+        target: /queries.yaml
+    ports:
+      - "9188:9187"
+  postgres-exporter-telegram:
+    restart: always
+    image: wrouesnel/postgres_exporter
+    environment:
+      DATA_SOURCE_NAME: "postgresql://postgres:Batman01@postgres-telegram:5432/telegram?sslmode=disable"
+      PG_EXPORTER_EXTEND_QUERY_PATH: "/queries.yaml"
+    configs:
+      - source: postgres-exporter-queries
+        target: /queries.yaml
+    ports:
+      - "9189:9187"
+  postgres-exporter-jira:
+    restart: always
+    image: wrouesnel/postgres_exporter
+    environment:
+      DATA_SOURCE_NAME: "postgresql://postgres:Batman01@postgres-jira:5432/jira?sslmode=disable"
+      PG_EXPORTER_EXTEND_QUERY_PATH: "/queries.yaml"
+    configs:
+      - source: postgres-exporter-queries
+        target: /queries.yaml
+    ports:
+      - "9190:9187"
+  postgres-exporter-ln:
+    restart: always
+    image: wrouesnel/postgres_exporter
+    environment:
+      DATA_SOURCE_NAME: "postgresql://postgres:Batman01@postgres-ln:5432/lightningd?sslmode=disable"
+      PG_EXPORTER_EXTEND_QUERY_PATH: "/queries.yaml"
+    configs:
+      - source: postgres-exporter-queries
+        target: /queries.yaml
+    ports:
+      - "9191:9187"
+
+  node_exporter:
+    restart: always
+    image: quay.io/prometheus/node-exporter:latest
+    command:
+      - '--path.rootfs=/host'
+    volumes:
+      - '/:/host:ro,rslave'
+    ports:
+      - "9100:9100"
+
+  docker-exporter:
+    restart: always
+    image: prom/container-exporter
+    ports:
+      - "9104:9104"
+    volumes:
+      - /sys/fs/cgroup:/cgroup
+      - /var/run/docker.sock:/var/run/docker.sock
+
+
+configs:
+  postgres-ln:
+    file: ./postgres/postgresql-ln-backup.conf
+  postgres-identity:
+    file: ./postgres/postgresql-identity-backup.conf
+  postgres-telegram:
+    file: ./postgres/postgresql-telegram-backup.conf
+  postgres-jira:
+    file: ./postgres/postgresql-jira-backup.conf
+  postgres-data:
+    file: ./postgres/postgresql-data-backup.conf
+  postgres-exporter-queries:
+    file: ./postgres-exporter-queries.yaml
+    
+    
+volumes:
+  btc_core:
+  watchtower:
+  postgres_identity:
+  postgres_data:
+  postgres_telegram:
+  postgres_jira:
+  jiraVolume:
+  elastic:

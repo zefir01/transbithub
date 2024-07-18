@@ -1,0 +1,236 @@
+version: '3.8'
+services:
+  postgres-aggregator:
+    container_name: postgres-aggregator
+    image: postgres:12
+    restart: always
+    command: postgres -c 'config_file=/etc/postgresql/postgresql.conf'
+    environment:
+      POSTGRES_PASSWORD: globalbitcoins
+      POSTGRES_USER: globalbitcoins
+      POSTGRES_DB: globalbitcoins_aggregator
+    volumes:
+      - postgres_aggregator:/data/postgres
+      - ./postgresql.conf:/etc/postgresql/postgresql.conf
+    ports:
+      - 5432
+
+  postgres-data:
+    container_name: postgres-data
+    image: postgres:12
+    restart: always
+    command: postgres -c 'config_file=/etc/postgresql/postgresql.conf'
+    environment:
+      POSTGRES_PASSWORD: globalbitcoins
+      POSTGRES_USER: globalbitcoins
+      POSTGRES_DB: globalbitcoins_data
+    volumes:
+      - postgres_data:/data/postgres
+      - ./postgresql.conf:/etc/postgresql/postgresql.conf
+    ports:
+      - 5432
+  postgres-identity:
+    container_name: postgres-identity
+    image: postgres:12
+    restart: always
+    command: postgres -c 'config_file=/etc/postgresql/postgresql.conf'
+    environment:
+      POSTGRES_PASSWORD: globalbitcoins
+      POSTGRES_USER: globalbitcoins
+      POSTGRES_DB: globalbitcoins_identity
+    volumes:
+      - postgres_identity:/data/postgres
+      - ./postgresql.conf:/etc/postgresql/postgresql.conf
+    ports:
+      - 5432
+  postgres-telegram:
+    container_name: postgres-telegram
+    image: postgres:12
+    restart: always
+    command: postgres -c 'config_file=/etc/postgresql/postgresql.conf'
+    environment:
+      POSTGRES_PASSWORD: globalbitcoins
+      POSTGRES_USER: globalbitcoins
+      POSTGRES_DB: globalbitcoins_telegram
+    volumes:
+      - postgres_telegram:/data/postgres
+      - ./postgresql.conf:/etc/postgresql/postgresql.conf
+    ports:
+      - 5432
+
+  postgres-telegram-notify:
+    image: postgres:12
+    restart: always
+    command: postgres -c 'config_file=/etc/postgresql/postgresql.conf'
+    environment:
+      POSTGRES_PASSWORD: globalbitcoins
+      POSTGRES_USER: globalbitcoins
+      POSTGRES_DB: telegram-notify
+    volumes:
+      - postgres_telegram_notify:/data/postgres
+      - ./postgresql.conf:/etc/postgresql/postgresql.conf
+    ports:
+      - 5432
+
+  redis:
+    image: redis
+    container_name: redis
+    ports:
+      - 6379
+
+  nats:
+    image: 'nats:latest'
+    ports:
+      - 4222
+    container_name: nats
+    restart: always
+
+  btc-core:
+    restart: always
+    container_name: btc-core
+    build: ./BtcCore/
+    image: test:5000/btc-core
+    init: true
+    stop_grace_period: 5m
+    volumes:
+      - btc_core:/opt/data
+    ports:
+      - 18334
+      - 28332
+
+  watchtower:
+    restart: always
+    container_name: watchtower
+    build: ./WatchTower/
+    image: test:5000/watchtower
+    init: true
+    stop_grace_period: 5m
+    environment:
+      API_BIND: 0.0.0.0
+      RPC_BIND: 0.0.0.0
+      BTC_NETWORK: testnet
+      BTC_FEED_CONNECT: btc-core
+      BTC_FEED_PORT: "28332"
+      BTC_RPC_CONNECT: btc-core
+      BTC_RPC_USER: "MyRpcUsername"
+      BTC_RPC_PASSWORD: "MyRpcPassword"
+      BTC_RPC_PORT: "18334"
+    volumes:
+      - watchtower:/root/.teos
+    ports:
+      - 9814
+      - 8814
+    depends_on:
+      - btc-core
+
+  envoy:
+    restart: always
+    container_name: envoy_local
+    build:
+      context: ./envoy/
+      dockerfile: Dockerfile.local
+    image: test:5000/envoy_local
+    environment:
+      - "ENVOY_UID=0"
+    ports:
+      - "80:80"
+      - "443:443"
+      - 9901
+      - "9000:9000"
+
+  mail:
+    restart: always
+    container_name: mail
+    build: ./Mail/
+    image: test:5000/mail
+    ports:
+      - 25
+      - 143
+    volumes:
+      - mail:/mail
+    environment:
+      DOMAIN: envoy.docker
+      NETWORK: 172.18.0.0/16
+
+  dns:
+    restart: always
+    container_name: dns
+    image: defreitas/dns-proxy-server
+    ports:
+      - 5380:5380
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /etc/resolv.conf:/etc/resolv.conf
+    command: -register-container-names
+
+  lnd:
+    restart: always
+    image: test:5000/lnd:testnet
+    build:
+      context: ./Lnd/
+      dockerfile: Dockerfile
+    ports:
+      - "9735:9735"
+      - 10009
+      - 10010
+    environment:
+      PORT: "9735"
+      ALIAS: "83.239.224.156"
+      LND_PASSWORD: "Batman01"
+      BTC_RPC_HOST: "btc-core:18334"
+      BTC_RPC_USER: "MyRpcUsername"
+      BTC_RPC_PASS: "MyRpcPassword"
+      BTC_ZMQ_RAW_BLOCKS: "btc-core:28334"
+      BTC_ZMQ_RAW_TX: "btc-core:28335"
+      TESTNET: "yes"
+    volumes:
+      - lnd:/root/.lnd
+      - btc_core:/bitcoin
+      - ln_cli:/root/.lncli
+
+  #password
+  rtl:
+    image: shahanafarooqui/rtl:0.10.1
+    restart: unless-stopped
+    depends_on:
+      - lnd
+    volumes:
+      - lnd:/shared
+    ports:
+      - "8090:8090"
+    environment:
+      PORT: 8090
+      HOST: "0.0.0.0"
+      MACAROON_PATH: /shared
+      LN_SERVER_URL: https://lnd:10010
+      LN_IMPLEMENTATION: LND
+      CONFIG_PATH: ''
+      RTL_SSO: 0
+      RTL_COOKIE_PATH: ''
+      LOGOUT_REDIRECT_LINK: ''
+      RTL_CONFIG_PATH: /RTL
+      BITCOIND_CONFIG_PATH: ''
+      CHANNEL_BACKUP_PATH: /backup
+
+
+networks:
+  default:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.18.0.0/16
+volumes:
+  btc_core:
+  watchtower:
+  postgres_identity:
+  postgres_data:
+  postgres_telegram:
+  postgres_ln:
+  postgres_listmonk:
+  mail:
+  lnd:
+  lnd_admin:
+  app-volume:
+  postgres_telegram_notify:
+  ln_cli:
+  postgres_aggregator: 

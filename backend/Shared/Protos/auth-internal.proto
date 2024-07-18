@@ -1,0 +1,28 @@
+syntax = "proto3";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+option csharp_namespace = "Auth.Protos.Internal";
+package InternalSchema;
+
+message RegisterTelegramUserRequest{
+  uint32 TelegramId = 1;
+  string Lang = 2;
+}
+message RegisterTelegramUserResponse{
+  string UserId = 1;
+}
+
+message UserInfo{
+  string Email = 1;
+  bool EnabledTwoFA = 2;
+  bool EmailVerified = 3;
+}
+message GetUserInfoRequest{
+  string UserId=1;
+}
+
+service Internal{
+  rpc RegisterTelegramUser(RegisterTelegramUserRequest) returns (RegisterTelegramUserResponse);
+  rpc GetUserInfo(GetUserInfoRequest) returns (UserInfo);
+}

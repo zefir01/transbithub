@@ -1,0 +1,6 @@
+[777369:777369:0501/074908.845193:ERROR:sandbox_linux.cc(374)] InitializeSandbox() called with multiple threads in process gpu-process.
+[777333:777333:0501/074911.393703:INFO:CONSOLE(4)] "'window.webkitStorageInfo' is deprecated. Please use 'navigator.webkitTemporaryStorage' or 'navigator.webkitPersistentStorage' instead.", source:  (4)
+[777333:777333:0501/074911.819557:INFO:CONSOLE(1)] "recaptchacompat disabled", source: https://hcaptcha.com/1/api.js?render=explicit&recaptchacompat=off&onload=_cf_chl_hload (1)
+[777371:777392:0501/074918.474045:WARNING:sqlite_persistent_store_backend_base.cc(171)] Failed to post task from FlushAndNotifyInBackground@../../net/extras/sqlite/sqlite_persistent_store_backend_base.cc:220 to client_task_runner_.
+[777371:777392:0501/074918.474282:WARNING:sqlite_persistent_store_backend_base.cc(171)] Failed to post task from FlushAndNotifyInBackground@../../net/extras/sqlite/sqlite_persistent_store_backend_base.cc:220 to client_task_runner_.
+[777333:777333:0501/074918.494044:WARNING:pref_notifier_impl.cc(40)] Pref observer for media_router.cast_allow_all_ips found at shutdown.

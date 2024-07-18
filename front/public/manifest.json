@@ -1,0 +1,15 @@
+{
+  "short_name": "TransBitHub",
+  "name": "P2P, Billing, Lightning Network",
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff",
+  "icons": [
+    {
+      "src": "/app/fav12.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

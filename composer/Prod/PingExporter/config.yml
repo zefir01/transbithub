@@ -1,0 +1,17 @@
+version: "1.0"  # version of the configuration (mandatory)
+ping:
+  configurations:
+    - sourceV4: "0.0.0.0" # Source address of ICMP requests
+      sourceV6: "::"      # Source address of ICMP requests
+      pingInterval: 1s             # interval for ICMP requests
+      pingTimeout: 10s              # timeout for ICMP requests
+      pingTargets: # list of ICMP targets
+        - pingTarget: 10.1.0.10
+          targetLabels:
+            target_name: front
+        - pingTarget: 10.1.0.2
+          targetLabels:
+            target_name: backup
+        - pingTarget: 10.1.0.22
+          targetLabels:
+            target_name: front-test

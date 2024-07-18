@@ -1,0 +1,71 @@
+stages:
+  - build
+  - docker
+  - deploy
+
+variables:
+  AGGREGATOR_TAG: $CI_REGISTRY_IMAGE:$CI_PIPELINE_ID
+
+build:
+  stage: build
+  image: mcr.microsoft.com/dotnet/sdk:5.0
+  retry: 2
+  script:
+    - echo "152.199.23.209  api.nuget.org" >> /etc/hosts
+    - mkdir build
+    - mkdir -p build/aggregator/bin/Release build/aggregator/bin/Debug
+    - cd Aggregator
+    - dotnet publish -c Release -o ../build/aggregator/bin/Release
+    - dotnet publish -c Debug -o ../build/aggregator/bin/Debug
+    - cd ..
+    - cp Dockerfile build/aggregator/Dockerfile
+  artifacts:
+    paths:
+      - build
+
+docker:test:
+  stage: docker
+  variables:
+    GIT_STRATEGY: none
+    ENVIRONMENT: Release
+  dependencies:
+    - build
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - cd build/aggregator
+    - docker build --build-arg ENVIRONMENT=$ENVIRONMENT -f Dockerfile -t $AGGREGATOR_TAG .
+    - docker push $AGGREGATOR_TAG
+
+update_image_test:
+  stage: deploy
+  image: $COPMPOSER_UPDATER_TAG
+  variables:
+    STACK: front-test
+    SERVICE: aggregator
+    IMAGE_TAG_NAME: AGGREGATOR_TAG
+    GIT_STRATEGY: none
+  when: manual
+  timeout: 3 hours
+  retry: 2
+  script:
+    - export IMAGE_TAG=$AGGREGATOR_TAG
+    - mkdir ~/.ssh && chmod 0700 ~/.ssh
+    - >
+      echo "Host $front_test_ip
+        StrictHostKeyChecking no" > ~/.ssh/config
+    - echo $docker_context_ssh_publick_key | base64 -d > ~/.ssh/id_rsa.pub
+    - echo $docker_context_ssh_private_key | base64 -d > ~/.ssh/id_rsa
+    - chmod 0600 ~/.ssh/id_rsa.pub
+    - chmod 0600 ~/.ssh/id_rsa
+    - docker context create front-test --docker "host=ssh://root@$front_test_ip"
+    - docker --context front-test login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker --context front-test service update --with-registry-auth --image $IMAGE_TAG ${STACK}_$SERVICE
+
+    - git clone http://gitlab-ci-token:$VERSIONS_TOKEN@gitlab:8100/root/versions.git
+    - cd versions
+    - sed -i "s|^$IMAGE_TAG_NAME=.*$|$IMAGE_TAG_NAME=$IMAGE_TAG|g" test.env
+    - git add -A
+    - git config --global user.email "$CI_PROJECT_NAME@gitlab" && git config --global user.name $CI_PROJECT_NAME
+    - "git commit -m \"Update $CI_PROJECT_TITLE with image: $IMAGE_TAG\""
+    - git push
+    - docker --context front-test logout $CI_REGISTRY

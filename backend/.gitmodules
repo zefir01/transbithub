@@ -1,0 +1,6 @@
+[submodule "LndMon/lndmon"]
+	path = LndMon/lndmon
+	url = https://github.com/lightninglabs/lndmon.git
+[submodule "bitcoinlib"]
+	path = bitcoinlib
+	url = https://github.com/zefir01/bitcoinlib.git

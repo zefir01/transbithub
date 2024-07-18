@@ -1,0 +1,5 @@
+FROM envoyproxy/envoy:v1.14.1
+COPY envoy.fancrypto.yaml /etc/envoy/envoy.yaml
+COPY fancrypto.pem /etc/site.pem
+COPY fancrypto.key etc/site.key
+ENTRYPOINT ["envoy", "-c", "/etc/envoy/envoy.yaml", "-l", "trace"]

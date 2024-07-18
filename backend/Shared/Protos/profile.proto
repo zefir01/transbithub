@@ -1,0 +1,126 @@
+syntax = "proto3";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+option csharp_namespace = "Protos.ProfileApi.V1";
+
+
+package ProfileSchema.V1;
+
+message RegisterAnonymousResponse{
+  string RefreshToken = 1;
+  string AccessToken = 2;
+}
+message RegisterAnonymousRequest{
+  string Lang = 1;
+}
+
+message RegisterRequest{
+  string Username = 1;
+  string Password = 2;
+  string Lang = 3;
+}
+
+message ChangeEmailRequest{
+  string TwoFa = 1;
+  string NewEmail = 2;
+}
+message ConfirmEmailRequest{
+  string Token = 1;
+}
+
+message ChangePasswordRequest{
+  string OldPassword = 1;
+  string NewPassword = 2;
+  string TwoFa = 3;
+}
+
+message GetTwoFACodeResponse{
+  string Code = 1;
+}
+
+message EnabledTwoFARequest{
+  string Pin = 1;
+  string Password = 2;
+}
+
+message DisableTwoFaRequest{
+  string Pin = 1;
+  string Password = 2;
+}
+
+message Session{
+  string Id = 1;
+  string Ip = 2;
+  google.protobuf.Timestamp CreatedAt = 3;
+  google.protobuf.Timestamp ExpiredAt = 4;
+  string ClientName = 5;
+  google.protobuf.Timestamp LastOnline = 6;
+}
+message SessionEvent{
+  string Ip = 1;
+  google.protobuf.Timestamp Time = 2;
+  string ClientName = 3;
+  string Event = 4;
+}
+
+message GetMySessionsResponse{
+  repeated Session Sessions = 1;
+  repeated SessionEvent Events = 2;
+}
+
+message KillSessionRequest{
+  string Id = 1;
+  string TwoFa = 2;
+}
+
+message PasswordRecoveryRequest{
+  string Email = 1;
+  string TwoFa = 2;
+}
+
+message PasswordRecoveryConfirmRequest{
+  string Email = 1;
+  string Token = 2;
+  string NewPassword = 3;
+}
+
+message GetMyReferenceTokenResponse{
+  string Token = 1;
+}
+
+message CreateReferenceTokenRequest{
+  string TwoFa = 1;
+}
+
+message CreateReferenceTokenResponse{
+  string Token = 1;
+}
+
+message RemoveReferenceTokenRequest{
+  string TwoFa = 1;
+}
+
+message RemoveAccountRequest{
+  string password = 1;
+  string TwoFa = 2;
+}
+
+service ProfileApi {
+  rpc RegisterAnonymous (RegisterAnonymousRequest) returns (RegisterAnonymousResponse);
+  rpc RegisterUser (RegisterRequest) returns (google.protobuf.Empty);
+  rpc ChangePassword (ChangePasswordRequest) returns (google.protobuf.Empty);
+  rpc ChangeEmail (ChangeEmailRequest) returns (google.protobuf.Empty);
+  rpc ConfirmEmail (ConfirmEmailRequest) returns (google.protobuf.Empty);
+  rpc GetTwoFACode (google.protobuf.Empty) returns (GetTwoFACodeResponse);
+  rpc EnabledTwoFA (EnabledTwoFARequest) returns (google.protobuf.Empty);
+  rpc DisableTwoFa (DisableTwoFaRequest) returns (google.protobuf.Empty);
+  rpc GetMySessions (google.protobuf.Empty) returns (GetMySessionsResponse);
+  rpc KillSession (KillSessionRequest) returns (google.protobuf.Empty);
+  rpc PasswordRecovery (PasswordRecoveryRequest) returns (google.protobuf.Empty);
+  rpc PasswordRecoveryConfirm (PasswordRecoveryConfirmRequest) returns (google.protobuf.Empty);
+  rpc GetMyReferenceToken (google.protobuf.Empty) returns (GetMyReferenceTokenResponse);
+  rpc RemoveReferenceToken (RemoveReferenceTokenRequest) returns (google.protobuf.Empty);
+  rpc CreateReferenceToken (CreateReferenceTokenRequest) returns (CreateReferenceTokenResponse);
+  rpc RemoveAccount (RemoveAccountRequest) returns (google.protobuf.Empty);
+}

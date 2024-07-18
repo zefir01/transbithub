@@ -1,0 +1,15 @@
+# *
+User-agent: *
+Disallow: /
+
+# *
+User-agent: *
+Disallow: /?gbid=*
+
+# Host
+Host: https://test.transbithub.com
+
+# Sitemaps
+Sitemap: https://test.transbithub.com/sitemap.xml
+Sitemap: https://test.transbithub.com/docs-static/sitemap.xml
+Sitemap: https://test.transbithub.com/aggregator/sitemap.xml

@@ -1,0 +1,20 @@
+﻿{
+  "profiles": {
+    "Aggregator": {
+      "commandName": "Project",
+      "dotnetRunMessages": "true",
+      "launchBrowser": false,
+      "applicationUrl": "http://localhost:5000;https://localhost:5001",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "LOG_LEVEL": "Debug",
+        "DATA_HOST": "postgres-aggregator",
+        "DATA_PORT": "5432",
+        "DATA_DB": "globalbitcoins_aggregator",
+        "DATA_USER": "globalbitcoins",
+        "DATA_PASS": "globalbitcoins",
+        "PROXY": "http://192.168.100.2:3128"
+      }
+    }
+  }
+}

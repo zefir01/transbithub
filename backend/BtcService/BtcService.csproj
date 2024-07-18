@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <Configurations>Debug;Release;Debug Mock</Configurations>
+        <Platforms>AnyCPU</Platforms>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug Mock' ">
+      <DebugSymbols Condition=" '$(DebugSymbols)' == '' ">true</DebugSymbols>
+      <Optimize Condition=" '$(Optimize)' == '' ">false</Optimize>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Grpc.AspNetCore" Version="2.34.0" />
+        <PackageReference Include="Grpc.Core" Version="2.34.0" />
+        <PackageReference Include="Grpc.Reflection" Version="2.34.0" />
+        <PackageReference Include="Serilog" Version="2.9.0" />
+        <PackageReference Include="Serilog.AspNetCore" Version="3.4.0" />
+        <PackageReference Include="Serilog.Exceptions" Version="6.0.0" />
+        <PackageReference Include="Serilog.Formatting.Elasticsearch" Version="8.4.1" />
+        <PackageReference Include="Serilog.Sinks.Udp" Version="7.1.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\bitcoinlib1\src\BitcoinLib\BitcoinLib.csproj" />
+      <ProjectReference Include="..\CoreLib\CoreLib.csproj" />
+    </ItemGroup>
+
+</Project>

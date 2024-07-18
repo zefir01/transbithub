@@ -1,0 +1,51 @@
+FROM debian:stable-slim AS builder
+WORKDIR /opt
+RUN apt update && apt install -y git build-essential libtool \
+ autotools-dev automake pkg-config bsdmainutils python3 libevent-dev \
+ libboost-system-dev libboost-filesystem-dev libboost-test-dev libboost-thread-dev \
+ libzmq3-dev libdb++-dev && apt-get clean all
+RUN git clone https://github.com/bitcoin/bitcoin.git && cd bitcoin
+WORKDIR /opt/bitcoin
+RUN git checkout 0.21
+RUN mkdir build && ./autogen.sh && ./autogen.sh && ./configure --with-incompatible-bdb \
+&& make -j $(nproc) && make install DESTDIR=/opt/bitcoin/build
+
+FROM debian:stable-slim as prod
+RUN apt update && apt install -y libboost-system1.67.0 libboost-filesystem1.67.0 libboost-test1.67.0 \
+ libboost-thread1.67.0 libevent-2.1-6 libdb5.3++ libevent-pthreads-2.1-6 libzmq5 && apt-get clean all
+WORKDIR /opt
+COPY --from=builder /opt/bitcoin/build/* /usr/
+RUN mkdir /opt/data
+EXPOSE 18334 28332 8333
+COPY ./tini /tini
+RUN chmod +x /tini
+
+ENV BITCOIN_USER ${BITCOIN_USER}
+ENV BITCOIN_PASS ${BITCOIN_PASS}
+ENV BITCOIN_NETWORK_SHORT ${BITCOIN_NETWORK_SHORT}
+ENV SITE_NAME_ONION ${SITE_NAME_ONION}
+
+ENTRYPOINT ["/tini", "--"]
+CMD bitcoind \
+-rpcuser=${BITCOIN_USER} \
+-rpcpassword=${BITCOIN_PASS} \
+-server=1 \
+-txconfirmtarget=3 \
+-chain=${BITCOIN_NETWORK_SHORT} \
+-proxy=172.18.0.1:9050 \
+-listen=1 \
+-externalip=${SITE_NAME_ONION} \
+-rpcbind=0.0.0.0 \ 
+-rpcallowip=10.0.0.0/8 \ 
+-rpcport=${BITCOIN_PORT} \
+-datadir=/opt/data \ 
+-fallbackfee=0.0002 \
+-txconfirmtarget=3 \
+-zmqpubhashblock=tcp://0.0.0.0:28332 \
+-zmqpubhashtx=tcp://0.0.0.0:28333 \
+-zmqpubrawblock=tcp://0.0.0.0:28334 \
+-zmqpubrawtx=tcp://0.0.0.0:28335 \
+-dbcache=128 \
+-rpcthreads=20 \
+-walletdir=/opt/data
+

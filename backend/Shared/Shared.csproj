@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <Configurations>Debug;Release;Debug Mock</Configurations>
+        <Platforms>AnyCPU</Platforms>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug Mock' ">
+      <DebugSymbols Condition=" '$(DebugSymbols)' == '' ">true</DebugSymbols>
+      <Optimize Condition=" '$(Optimize)' == '' ">false</Optimize>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Google.Protobuf" Version="3.14.0" />
+      <PackageReference Include="Grpc.AspNetCore" Version="2.34.0" />
+      <PackageReference Include="Grpc.Core" Version="2.34.0" />
+      <PackageReference Include="Grpc.Reflection" Version="2.34.0" />
+      <PackageReference Include="IdentityServer4" Version="4.1.1" />
+      <PackageReference Include="IdentityServer4.EntityFramework.Storage" Version="4.1.1" />
+      <PackageReference Include="Marques.EFCorev3.0.SnakeCase" Version="1.0.13" />
+      <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="5.0.1" />
+      <PackageReference Include="NBitcoin" Version="5.0.68" />
+      <PackageReference Include="Serilog" Version="2.9.0" />
+      <PackageReference Include="Serilog.Exceptions" Version="6.0.0" />
+      <PackageReference Include="Serilog.Formatting.Elasticsearch" Version="8.4.1" />
+      <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
+      <PackageReference Include="Serilog.Sinks.Udp" Version="7.1.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Protobuf Include="Protos/*.proto" GrpcServices="Both" />
+    </ItemGroup>
+
+</Project>

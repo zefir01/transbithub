@@ -1,0 +1,104 @@
+image: docker
+
+stages:
+  - build
+  - docker
+  - deploy
+
+
+variables:
+  IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_PIPELINE_ID
+  BUILDER_TAG: $CI_REGISTRY/root/temp-images/btc_core_builder:latest
+  DEPS_TAG: $CI_REGISTRY/root/temp-images/btc_core_deps:latest
+  VERSION: "0.21"
+
+build:
+  stage: build
+  image: $BUILDER_TAG
+  script:
+    - git clone https://github.com/bitcoin/bitcoin.git
+    - cd bitcoin
+    - git checkout $VERSION
+    - mkdir build
+    - ./autogen.sh
+    - ./configure --with-incompatible-bdb 
+    - make -j 6
+    - make install DESTDIR="$(pwd)/build"
+    - mv build ..
+  artifacts:
+    paths:
+      - build
+
+docker:
+  stage: docker
+  dependencies:
+    - build
+  script:
+    - sed -i "s|__DEPS_TAG__|$DEPS_TAG|g" Dockerfile
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build -f Dockerfile -t $IMAGE_TAG .
+    - docker push $IMAGE_TAG
+      
+
+update_image:test:
+  stage: deploy
+  image: $COPMPOSER_UPDATER_TAG
+  variables:
+    STACK: test
+    SERVICE: btc-core
+    IMAGE_TAG_NAME: BTC_CORE_TAG
+    GIT_STRATEGY: none
+  when: manual
+  script:
+    - mkdir ~/.ssh && chmod 0700 ~/.ssh
+    - >
+      echo "Host $master_ip
+        StrictHostKeyChecking no" > ~/.ssh/config
+    - echo $docker_context_ssh_publick_key | base64 -d > ~/.ssh/id_rsa.pub
+    - echo $docker_context_ssh_private_key | base64 -d > ~/.ssh/id_rsa
+    - chmod 0600 ~/.ssh/id_rsa.pub
+    - chmod 0600 ~/.ssh/id_rsa
+    - docker context create master --docker "host=ssh://root@$master_ip"
+    - docker --context master login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker --context master service update --with-registry-auth --image $IMAGE_TAG ${STACK}_$SERVICE
+    - git clone http://gitlab-ci-token:$VERSIONS_TOKEN@gitlab:8100/root/versions.git
+    - cd versions
+    - sed -i "s|^$IMAGE_TAG_NAME=.*$|$IMAGE_TAG_NAME=$IMAGE_TAG|g" test.env
+    - git add -A
+    - git config --global user.email "$CI_PROJECT_NAME@gitlab" && git config --global user.name $CI_PROJECT_NAME
+    - "git commit -m \"Update $CI_PROJECT_TITLE with image: $IMAGE_TAG\""
+    - git push
+    - docker --context master logout $CI_REGISTRY
+
+      
+update_image:prod:
+  stage: deploy
+  image: $COPMPOSER_UPDATER_TAG
+  variables:
+    STACK: prod
+    SERVICE: btc-core
+    IMAGE_TAG_NAME: BTC_CORE_TAG
+    GIT_STRATEGY: none
+  when: manual
+  script:
+    - mkdir ~/.ssh && chmod 0700 ~/.ssh
+    - >
+      echo "Host $master_ip
+        StrictHostKeyChecking no" > ~/.ssh/config
+    - echo $docker_context_ssh_publick_key | base64 -d > ~/.ssh/id_rsa.pub
+    - echo $docker_context_ssh_private_key | base64 -d > ~/.ssh/id_rsa
+    - chmod 0600 ~/.ssh/id_rsa.pub
+    - chmod 0600 ~/.ssh/id_rsa
+    - docker context create master --docker "host=ssh://root@$master_ip"
+    - docker --context master login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker --context master service update --with-registry-auth --image $IMAGE_TAG ${STACK}_$SERVICE
+    - git clone http://gitlab-ci-token:$VERSIONS_TOKEN@gitlab:8100/root/versions.git
+    - cd versions
+    - sed -i "s|^$IMAGE_TAG_NAME=.*$|$IMAGE_TAG_NAME=$IMAGE_TAG|g" prod.env
+    - git add -A
+    - git config --global user.email "$CI_PROJECT_NAME@gitlab" && git config --global user.name $CI_PROJECT_NAME
+    - "git commit -m \"Update $CI_PROJECT_TITLE with image: $IMAGE_TAG\""
+    - git push
+    - docker --context master logout $CI_REGISTRY
+
+

@@ -1,0 +1,19 @@
+syntax = "proto3";
+import "Protos/api.proto";
+option csharp_namespace = "GrpcService1.Protos.Nats";
+
+package CoreSchema.V1;
+
+message EventNats {
+    string receiver = 1;
+    Event event = 2;
+}
+message AdChanged {
+    uint64 AdId=1;
+    SubscribeAdvertisementChangesResponse data=2;
+}
+message PublicInvoiceChanged{
+    uint64 InvoiceId=1;
+    bool IsInvoiceDeleted=2;
+    SubscribePublicInvoiceResponse Data=3;
+}

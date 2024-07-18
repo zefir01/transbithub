@@ -1,0 +1,30 @@
+syntax = "proto3";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+option csharp_namespace = "Backend.Protos.Internal";
+
+
+package InternalSchema;
+
+message CreateUserDataRequest{
+  string UserId = 1;
+  string UserName = 2;
+  bool IsAnonymous = 3;
+  string Lang = 4;
+  string Ip=5;
+}
+message DeleteUserDataRequest{
+  string UserId = 1;
+}
+message SetMarketingRequest{
+  string UserId = 1;
+  string YandexId = 2;
+}
+
+service InternalApi{
+  rpc CreateUserData(CreateUserDataRequest) returns (google.protobuf.Empty);
+  rpc DeleteUserData(DeleteUserDataRequest) returns (google.protobuf.Empty);
+  rpc SetMarketing(SetMarketingRequest) returns (google.protobuf.Empty);
+}
+

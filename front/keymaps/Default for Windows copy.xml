@@ -1,0 +1,5 @@
+<keymap version="1" name="Default for Windows copy" parent="$default">
+  <action id="ReformatCode">
+    <keyboard-shortcut first-keystroke="ctrl alt q" />
+  </action>
+</keymap>

@@ -1,0 +1,65 @@
+version: '3.3'
+
+services:
+  btc-core:
+    restart: always
+    build:
+      context: ../../BtcCore/
+      dockerfile: Dockerfile-prod
+    image: backup:5000/btc-core:test
+    stop_grace_period: 5m
+    volumes:
+      - btc_core:/opt/data
+    ports:
+      - 18334
+      - 28332
+    command: bitcoind \
+      -listen=0 \
+      -rpcuser=MyRpcUsername \
+      -rpcpassword=MyRpcPassword \
+      -server=1 \
+      -txconfirmtarget=3 \
+      -rpcbind=0.0.0.0 \
+      -rpcallowip=172.18.0.0/16 \
+      -rpcport=18334 \
+      -datadir=/opt/data \
+      -fallbackfee=0.0002 \
+      -txconfirmtarget=3 \
+      -zmqpubhashblock=tcp://0.0.0.0:28332 \
+      -zmqpubhashtx=tcp://0.0.0.0:28332 \
+      -zmqpubrawblock=tcp://0.0.0.0:28332 \
+      -zmqpubrawtx=tcp://0.0.0.0:28332
+
+  watchtower:
+    restart: always
+    build: WatchTower/
+    image: backup:5000/watchtower
+    init: true
+    stop_grace_period: 5m
+    environment:
+      API_BIND: 0.0.0.0
+      RPC_BIND: 0.0.0.0
+      BTC_NETWORK: mainnet
+      BTC_FEED_CONNECT: btc-core
+      BTC_FEED_PORT: "28332"
+      BTC_RPC_CONNECT: btc-core
+      BTC_RPC_USER: "MyRpcUsername"
+      BTC_RPC_PASSWORD: "MyRpcPassword"
+      BTC_RPC_PORT: "18334"
+    volumes:
+      - watchtower:/root/.teos
+    ports:
+      - "9814:9814"
+      - "8814:8814"
+    depends_on:
+      - btc-core
+
+networks:
+  default:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.18.0.0/24
+volumes:
+  btc_core:
+  watchtower:

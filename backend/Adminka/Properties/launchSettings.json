@@ -1,0 +1,29 @@
+﻿{
+  "profiles": {
+    "Adminka": {
+      "commandName": "Project",
+      "dotnetRunMessages": "true",
+      "launchBrowser": false,
+      "applicationUrl": "http://localhost:5000;https://localhost:5001",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "LOG_LEVEL": "Debug",
+        "AUTH_HOST": "localhost",
+        "AUTH_HTTP_PORT": "5001",
+        "AUTH_HTTP2_PORT": "5002",
+        "DATA_HOST": "postgres-data",
+        "DATA_PORT": "5432",
+        "DATA_DB": "globalbitcoins_data",
+        "DATA_USER": "globalbitcoins",
+        "DATA_PASS": "globalbitcoins",
+        "IDENTITY_HOST": "postgres-identity",
+        "IDENTITY_PORT": "5432",
+        "IDENTITY_DB": "globalbitcoins_identity",
+        "IDENTITY_USER": "globalbitcoins",
+        "IDENTITY_PASS": "globalbitcoins",
+        "TZ": "Etc/UTC",
+        "LND_URL": "lnd:10009"
+      }
+    }
+  }
+}

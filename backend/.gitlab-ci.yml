@@ -1,0 +1,385 @@
+stages:
+  - build
+  - docker
+  - deploy_test
+  - deploy_prod
+
+variables:
+  BACKEND_TEST_TAG: $CI_REGISTRY/$CI_PROJECT_PATH/backend:test-$CI_PIPELINE_ID
+  BACKEND_PROD_TAG: $CI_REGISTRY/$CI_PROJECT_PATH/backend:prod-$CI_PIPELINE_ID
+  AUTH_TEST_TAG: $CI_REGISTRY/$CI_PROJECT_PATH/auth:test-$CI_PIPELINE_ID
+  AUTH_PROD_TAG: $CI_REGISTRY/$CI_PROJECT_PATH/auth:prod-$CI_PIPELINE_ID
+  ADMINKA_TEST_TAG: $CI_REGISTRY/$CI_PROJECT_PATH/adminka:test-$CI_PIPELINE_ID
+  ADMINKA_PROD_TAG: $CI_REGISTRY/$CI_PROJECT_PATH/adminka:prod-$CI_PIPELINE_ID
+  BTC_SERVICE_TEST_TAG: $CI_REGISTRY/$CI_PROJECT_PATH/btc-service:test-$CI_PIPELINE_ID
+  BTC_SERVICE_PROD_TAG: $CI_REGISTRY/$CI_PROJECT_PATH/btc-service:prod-$CI_PIPELINE_ID
+  CLI_TEST_TAG: $CI_REGISTRY/$CI_PROJECT_PATH/cli:test-$CI_PIPELINE_ID
+  CLI_PROD_TAG: $CI_REGISTRY/$CI_PROJECT_PATH/cli:prod-$CI_PIPELINE_ID
+  CRONS_TEST_TAG: $CI_REGISTRY/$CI_PROJECT_PATH/crons:test-$CI_PIPELINE_ID
+  CRONS_PROD_TAG: $CI_REGISTRY/$CI_PROJECT_PATH/crons:prod-$CI_PIPELINE_ID
+  TELEGRAM_NOTIFY_TEST_TAG: $CI_REGISTRY/$CI_PROJECT_PATH/telegram-notify:test-$CI_PIPELINE_ID
+  TELEGRAM_NOTIFY_PROD_TAG: $CI_REGISTRY/$CI_PROJECT_PATH/telegram-notify
+  TELEGRAM_SERVICE_TEST_TAG: $CI_REGISTRY/$CI_PROJECT_PATH/telegram-service:test-$CI_PIPELINE_ID
+  TELEGRAM_SERVICE_PROD_TAG: $CI_REGISTRY/$CI_PROJECT_PATH/telegram-service:prod-$CI_PIPELINE_ID
+
+build:
+  stage: build
+  image: mcr.microsoft.com/dotnet/sdk:5.0
+  retry: 2
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
+  script:
+    - echo "152.199.23.209  api.nuget.org" >> /etc/hosts
+    - mkdir build
+    - mkdir -p build/backend/bin/Release build/backend/bin/Debug
+    - mkdir -p build/adminka/bin/Release build/adminka/bin/Debug
+    - mkdir -p build/auth/bin/Release build/auth/bin/Debug
+    - mkdir -p build/btc_service/bin/Release build/btc_service/bin/Debug
+    - mkdir -p build/cli/bin/Release build/btc_service/bin/Debug
+    - mkdir -p build/crons/bin/Release build/crons/bin/Debug
+    - mkdir -p build/telegram_notify/bin/Release build/telegram_notify/bin/Debug
+    - mkdir -p build/telegram_service/bin/Release build/telegram_service/bin/Debug
+    - cd Backend
+    - dotnet publish -c Release -o ../build/backend/bin/Release
+    - dotnet publish -c Debug -o ../build/backend/bin/Debug
+    - cd ../Auth
+    - dotnet publish -c Release -o ../build/auth/bin/Release
+    - dotnet publish -c Debug -o ../build/auth/bin/Debug
+    - cd ../Adminka
+    - dotnet publish -c Release -o ../build/adminka/bin/Release
+    - dotnet publish -c Debug -o ../build/adminka/bin/Debug
+    - cd ../BtcService
+    - dotnet publish -c Release -o ../build/btc_service/bin/Release
+    - dotnet publish -c Debug -o ../build/btc_service/bin/Debug
+    - cd ../Cli
+    - dotnet publish -c Release -o ../build/cli/bin/Release
+    - dotnet publish -c Debug -o ../build/cli/bin/Debug
+    - cd ../Crons
+    - dotnet publish -c Release -o ../build/crons/bin/Release
+    - dotnet publish -c Debug -o ../build/crons/bin/Debug
+    - cd ../TelegramNotify
+    - dotnet publish -c Release -o ../build/telegram_notify/bin/Release
+    - dotnet publish -c Debug -o ../build/telegram_notify/bin/Debug
+    - cd ../TelegramService
+    - dotnet publish -c Release -o ../build/telegram_service/bin/Release
+    - dotnet publish -c Debug -o ../build/telegram_service/bin/Debug
+    - cd ..
+    - cp Backend/Dockerfile build/backend/Dockerfile
+    - cp Backend/start.sh build/backend/start.sh
+    - cp Auth/Dockerfile build/auth/Dockerfile
+    - cp Adminka/Dockerfile build/adminka/Dockerfile
+    - cp BtcService/Dockerfile build/btc_service/Dockerfile
+    - cp Cli/Dockerfile build/cli/Dockerfile
+    - cp Crons/Dockerfile build/crons/Dockerfile
+    - cp Crons/start.sh build/crons/start.sh
+    - cp TelegramNotify/Dockerfile build/telegram_notify/Dockerfile
+    - cp TelegramNotify/start.sh build/telegram_notify/start.sh
+    - cp TelegramService/Dockerfile build/telegram_service/Dockerfile
+    - cp TelegramService/start.sh build/telegram_service/start.sh
+  artifacts:
+    paths:
+      - build
+
+docker:test:
+  stage: docker
+  variables:
+    GIT_STRATEGY: none
+    ENVIRONMENT: Debug
+  dependencies:
+    - build
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - cd build/backend
+    - docker build --build-arg ENVIRONMENT=$ENVIRONMENT -f Dockerfile -t $BACKEND_TEST_TAG .
+    - cd ../auth
+    - docker build --build-arg ENVIRONMENT=$ENVIRONMENT -f Dockerfile -t $AUTH_TEST_TAG .
+    - cd ../adminka
+    - docker build --build-arg ENVIRONMENT=$ENVIRONMENT -f Dockerfile -t $ADMINKA_TEST_TAG .
+    - cd ../btc_service
+    - docker build --build-arg ENVIRONMENT=$ENVIRONMENT -f Dockerfile -t $BTC_SERVICE_TEST_TAG .
+    - cd ../cli
+    - docker build --build-arg ENVIRONMENT=$ENVIRONMENT -f Dockerfile -t $CLI_TEST_TAG .
+    - cd ../crons
+    - docker build --build-arg ENVIRONMENT=$ENVIRONMENT -f Dockerfile -t $CRONS_TEST_TAG .
+    - cd ../telegram_notify
+    - docker build --build-arg ENVIRONMENT=$ENVIRONMENT -f Dockerfile -t $TELEGRAM_NOTIFY_TEST_TAG .
+    - cd ../telegram_service
+    - docker build --build-arg ENVIRONMENT=$ENVIRONMENT -f Dockerfile -t $TELEGRAM_SERVICE_TEST_TAG .
+    - docker push $BACKEND_TEST_TAG
+    - docker push $AUTH_TEST_TAG
+    - docker push $ADMINKA_TEST_TAG
+    - docker push $BTC_SERVICE_TEST_TAG
+    - docker push $CLI_TEST_TAG
+    - docker push $CRONS_TEST_TAG
+    - docker push $TELEGRAM_NOTIFY_TEST_TAG
+    - docker push $TELEGRAM_SERVICE_TEST_TAG
+
+docker:prod:
+  stage: docker
+  variables:
+    GIT_STRATEGY: none
+    ENVIRONMENT: Release
+  dependencies:
+    - build
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - cd build/backend
+    - docker build --build-arg ENVIRONMENT=$ENVIRONMENT -f Dockerfile -t $BACKEND_PROD_TAG .
+    - cd ../auth
+    - docker build --build-arg ENVIRONMENT=$ENVIRONMENT -f Dockerfile -t $AUTH_PROD_TAG .
+    - cd ../adminka
+    - docker build --build-arg ENVIRONMENT=$ENVIRONMENT -f Dockerfile -t $ADMINKA_PROD_TAG .
+    - cd ../btc_service
+    - docker build --build-arg ENVIRONMENT=$ENVIRONMENT -f Dockerfile -t $BTC_SERVICE_PROD_TAG .
+    - cd ../cli
+    - docker build --build-arg ENVIRONMENT=$ENVIRONMENT -f Dockerfile -t $CLI_PROD_TAG .
+    - cd ../crons
+    - docker build --build-arg ENVIRONMENT=$ENVIRONMENT -f Dockerfile -t $CRONS_PROD_TAG .
+    - cd ../telegram_notify
+    - docker build --build-arg ENVIRONMENT=$ENVIRONMENT -f Dockerfile -t $TELEGRAM_NOTIFY_PROD_TAG .
+    - cd ../telegram_service
+    - docker build --build-arg ENVIRONMENT=$ENVIRONMENT -f Dockerfile -t $TELEGRAM_SERVICE_PROD_TAG .
+    - docker push $BACKEND_PROD_TAG
+    - docker push $AUTH_PROD_TAG
+    - docker push $ADMINKA_PROD_TAG
+    - docker push $BTC_SERVICE_PROD_TAG
+    - docker push $CLI_PROD_TAG
+    - docker push $CRONS_PROD_TAG
+    - docker push $TELEGRAM_NOTIFY_PROD_TAG
+    - docker push $TELEGRAM_SERVICE_PROD_TAG
+
+.test_job_header: &test_job_header
+  stage: deploy_test
+  image: $COPMPOSER_UPDATER_TAG
+  when: manual
+  timeout: 10 minutes
+
+.test_script_template: &test_script_template
+    - echo $IMAGE_TAG_NAME
+    - echo ${STACK}_$SERVICE
+    - echo $IMAGE_TAG
+    - mkdir ~/.ssh && chmod 0700 ~/.ssh
+    - >
+      echo "Host $master_ip
+        StrictHostKeyChecking no" > ~/.ssh/config
+    - echo $docker_context_ssh_publick_key | base64 -d > ~/.ssh/id_rsa.pub
+    - echo $docker_context_ssh_private_key | base64 -d > ~/.ssh/id_rsa
+    - chmod 0600 ~/.ssh/id_rsa.pub
+    - chmod 0600 ~/.ssh/id_rsa
+    - docker context create master --docker "host=ssh://root@$master_ip"
+    - docker --context master login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker --context master service update --with-registry-auth --image $IMAGE_TAG ${STACK}_$SERVICE
+    - git clone http://gitlab-ci-token:$VERSIONS_TOKEN@gitlab:8100/root/versions.git
+    - cd versions
+    - sed -i "s|^$IMAGE_TAG_NAME=.*$|$IMAGE_TAG_NAME=$IMAGE_TAG|g" test.env
+    - git add -A
+    - git config --global user.email "$CI_PROJECT_NAME@gitlab" && git config --global user.name $CI_PROJECT_NAME
+    - "git commit -m \"Update $CI_PROJECT_TITLE with image: $IMAGE_TAG\""
+    - git push
+
+.prod_script_template: &prod_script_template
+    - echo $IMAGE_TAG_NAME
+    - echo ${STACK}_$SERVICE
+    - echo $IMAGE_TAG
+    - mkdir ~/.ssh && chmod 0700 ~/.ssh
+    - >
+      echo "Host $master_ip
+        StrictHostKeyChecking no" > ~/.ssh/config
+    - echo $docker_context_ssh_publick_key | base64 -d > ~/.ssh/id_rsa.pub
+    - echo $docker_context_ssh_private_key | base64 -d > ~/.ssh/id_rsa
+    - chmod 0600 ~/.ssh/id_rsa.pub
+    - chmod 0600 ~/.ssh/id_rsa
+    - docker context create master --docker "host=ssh://root@$master_ip"
+    - docker --context master login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker --context master service update --with-registry-auth --image $IMAGE_TAG ${STACK}_$SERVICE
+    - git clone http://gitlab-ci-token:$VERSIONS_TOKEN@gitlab:8100/root/versions.git
+    - cd versions
+    - sed -i "s|^$IMAGE_TAG_NAME=.*$|$IMAGE_TAG_NAME=$IMAGE_TAG|g" prod.env
+    - git add -A
+    - git config --global user.email "$CI_PROJECT_NAME@gitlab" && git config --global user.name $CI_PROJECT_NAME
+    - "git commit -m \"Update $CI_PROJECT_TITLE with image: $IMAGE_TAG\""
+    - git push
+
+.prod_job_header: &prod_job_header
+  stage: deploy_prod
+  image: $COPMPOSER_UPDATER_TAG
+  when: manual
+  timeout: 10 minutes
+
+backend:test:
+  <<: *test_job_header
+  variables:
+    SERVICE: backend
+    IMAGE_TAG_NAME: BACKEND_TAG
+    STACK: test
+    GIT_STRATEGY: none
+  script:
+    - IMAGE_TAG=$BACKEND_TEST_TAG
+    - *test_script_template
+
+auth:test:
+  <<: *test_job_header
+  variables:
+    SERVICE: auth
+    IMAGE_TAG_NAME: AUTH_TAG
+    STACK: test
+    GIT_STRATEGY: none
+  script:
+    - IMAGE_TAG=$AUTH_TEST_TAG
+    - *test_script_template
+
+adminka:test:
+  <<: *test_job_header
+  variables:
+    SERVICE: adminka
+    IMAGE_TAG_NAME: ADMINKA_TAG
+    STACK: test
+    GIT_STRATEGY: none
+  script:
+    - IMAGE_TAG=$ADMINKA_TEST_TAG
+    - *test_script_template
+
+btc_service:test:
+  <<: *test_job_header
+  variables:
+    SERVICE: btc-service
+    IMAGE_TAG_NAME: BTC_SERVICE_TAG
+    STACK: test
+    GIT_STRATEGY: none
+  script:
+    - IMAGE_TAG=$BTC_SERVICE_TEST_TAG
+    - *test_script_template
+
+cli:test:
+  <<: *test_job_header
+  variables:
+    SERVICE: cli
+    IMAGE_TAG_NAME: CLI_TAG
+    STACK: test
+    GIT_STRATEGY: none
+  script:
+    - IMAGE_TAG=$CLI_TEST_TAG
+    - *test_script_template
+
+crons:test:
+  <<: *test_job_header
+  variables:
+    SERVICE: crons
+    IMAGE_TAG_NAME: CRONS_TAG
+    STACK: test
+    GIT_STRATEGY: none
+  script:
+    - IMAGE_TAG=$CRONS_TEST_TAG
+    - *test_script_template
+
+telegram_notify:test:
+  <<: *test_job_header
+  variables:
+    SERVICE: telegram-notify-service
+    IMAGE_TAG_NAME: TELEGRAM_NOTIFY_TAG
+    STACK: test
+    GIT_STRATEGY: none
+  script:
+    - IMAGE_TAG=$TELEGRAM_SERVICE_TEST_TAG
+    - *test_script_template
+
+telegram_service:test:
+  <<: *test_job_header
+  variables:
+    SERVICE: telegram-service
+    IMAGE_TAG_NAME: TELEGRAM_SERVICE_TAG
+    STACK: test
+    GIT_STRATEGY: none
+  script:
+    - IMAGE_TAG=$TELEGRAM_SERVICE_TEST_TAG
+    - *test_script_template
+
+
+
+backend:prod:
+  <<: *prod_job_header
+  variables:
+    SERVICE: backend
+    IMAGE_TAG_NAME: BACKEND_TAG
+    STACK: prod
+    GIT_STRATEGY: none
+  script:
+    - IMAGE_TAG=$BACKEND_PROD_TAG
+    - *prod_script_template
+
+auth:prod:
+  <<: *prod_job_header
+  variables:
+    SERVICE: auth
+    IMAGE_TAG_NAME: AUTH_TAG
+    STACK: prod
+    GIT_STRATEGY: none
+  script:
+    - IMAGE_TAG=$AUTH_PROD_TAG
+    - *prod_script_template
+
+adminka:prod:
+  <<: *prod_job_header
+  variables:
+    SERVICE: adminka
+    IMAGE_TAG_NAME: ADMINKA_TAG
+    STACK: prod
+    GIT_STRATEGY: none
+  script:
+    - IMAGE_TAG=$ADMINKA_PROD_TAG
+    - *prod_script_template
+
+btc_service:prod:
+  <<: *prod_job_header
+  variables:
+    SERVICE: btc-service
+    IMAGE_TAG_NAME: BTC_SERVICE_TAG
+    STACK: prod
+    GIT_STRATEGY: none
+  script:
+    - IMAGE_TAG=$BTC_SERVICE_PROD_TAG
+    - *prod_script_template
+
+cli:prod:
+  <<: *prod_job_header
+  variables:
+    SERVICE: cli
+    IMAGE_TAG_NAME: CLI_TAG
+    STACK: prod
+    GIT_STRATEGY: none
+  script:
+    - IMAGE_TAG=$CLI_PROD_TAG
+    - *prod_script_template
+
+crons:prod:
+  <<: *prod_job_header
+  variables:
+    SERVICE: crons
+    IMAGE_TAG_NAME: CRONS_TAG
+    STACK: prod
+    GIT_STRATEGY: none
+  script:
+    - IMAGE_TAG=$CRONS_PROD_TAG
+    - *prod_script_template
+
+telegram_notify:prod:
+  <<: *prod_job_header
+  variables:
+    SERVICE: telegram-notify-service
+    IMAGE_TAG_NAME: TELEGRAM_NOTIFY_TAG
+    STACK: prod
+    GIT_STRATEGY: none
+  script:
+    - IMAGE_TAG=$TELEGRAM_SERVICE_PROD_TAG
+    - *prod_script_template
+
+telegram_service:prod:
+  <<: *prod_job_header
+  variables:
+    SERVICE: telegram-service
+    IMAGE_TAG_NAME: TELEGRAM_SERVICE_TAG
+    STACK: prod
+    GIT_STRATEGY: none
+  script:
+    - IMAGE_TAG=$TELEGRAM_SERVICE_PROD_TAG
+    - *prod_script_template

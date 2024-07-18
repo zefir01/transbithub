@@ -1,0 +1,40 @@
+image: docker
+
+stages:
+  - build
+
+
+variables:
+  COPMPOSER_UPDATER_TAG: $CI_REGISTRY/$CI_PROJECT_PATH/composer-updater:latest
+  MKDOCS_TAG: $CI_REGISTRY/$CI_PROJECT_PATH/mkdocs:latest
+  BTC_CORE_BUILDER_TAG: $CI_REGISTRY/$CI_PROJECT_PATH/btc_core_builder:latest
+  BTC_CORE_DEPS_TAG: $CI_REGISTRY/$CI_PROJECT_PATH/btc_core_deps:latest
+
+composer_updater:
+  stage: build
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build -f composer_updater.dockerfile -t $COPMPOSER_UPDATER_TAG .
+    - docker push $COPMPOSER_UPDATER_TAG
+
+mkdocs:
+  stage: build
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build -f mkdocs.dockerfile -t $MKDOCS_TAG .
+    - docker push $MKDOCS_TAG
+
+btc_core_builder:
+  stage: build
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build -f btc_core_builder.dockerfile -t $BTC_CORE_BUILDER_TAG .
+    - docker push $BTC_CORE_BUILDER_TAG
+
+btc_core_deps:
+  stage: build
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build -f btc_core_deps.dockerfile -t $BTC_CORE_DEPS_TAG .
+    - docker push $BTC_CORE_DEPS_TAG
+

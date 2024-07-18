@@ -1,0 +1,169 @@
+﻿@import "Tabs.css";
+
+
+article, aside, dialog, figcaption, figure, footer, header, hgroup, main, nav, section {
+//    position: absolute;
+    bottom: 20px;
+    width: 100%
+}
+
+.navigation-clean {
+    background: #fff;
+    padding-top: .75rem;
+    padding-bottom: .75rem;
+    color: #333;
+    border-radius: 0;
+    box-shadow: none;
+    border: none;
+    margin-bottom: 0
+}
+
+@media (min-width:768px) {
+    .navigation-clean {
+        padding-top: 1rem;
+        padding-bottom: 1rem
+    }
+}
+
+.navigation-clean .navbar-brand {
+    font-weight: 700;
+    color: inherit
+}
+
+    .navigation-clean .navbar-brand:hover {
+        color: #222
+    }
+
+.navigation-clean .navbar-toggler {
+    border-color: #ddd;
+    color: #888
+}
+
+    .navigation-clean .navbar-toggler:focus, .navigation-clean .navbar-toggler:hover {
+        background: 0 0
+    }
+
+.navigation-clean .form-inline, .navigation-clean .navbar-collapse {
+    border-top-color: #ddd
+}
+
+.navigation-clean.navbar-light .navbar-nav .nav-link.active, .navigation-clean.navbar-light .navbar-nav .nav-link.active:focus, .navigation-clean.navbar-light .navbar-nav .nav-link.active:hover {
+    color: #8f8f8f;
+    box-shadow: none;
+    background: 0 0;
+    pointer-events: none
+}
+
+.navigation-clean.navbar .navbar-nav .nav-link {
+    padding-left: 18px;
+    padding-right: 18px
+}
+
+.navigation-clean.navbar-light .navbar-nav .nav-link {
+    color: #465765
+}
+
+    .navigation-clean.navbar-light .navbar-nav .nav-link:focus, .navigation-clean.navbar-light .navbar-nav .nav-link:hover {
+        color: #37434d !important;
+        background-color: transparent
+    }
+
+.navigation-clean .navbar-nav > li > .dropdown-menu {
+    margin-top: -5px;
+    box-shadow: none;
+    background-color: #fff;
+    border-radius: 2px
+}
+
+.navigation-clean .dropdown-menu .dropdown-item, .navigation-clean .dropdown-menu .dropdown-item:focus {
+    line-height: 2;
+    color: #37434d
+}
+
+    .navigation-clean .dropdown-menu .dropdown-item:focus, .navigation-clean .dropdown-menu .dropdown-item:hover {
+        background: #eee;
+        color: inherit
+    }
+/*
+.nav-tabs .nav-item {
+    margin-bottom: -1px;
+    width: 50%;
+    text-align: left;
+    border: 1px;
+    background-color: #000
+}
+*/
+.mytab > a.active {
+    background-color: transparent !important;
+    border-style: solid solid none;
+    color: red !important
+}
+
+.mytab > a {
+    border: 1px solid #000;
+    border-style: none none solid;
+    outline: 0;
+    border-bottom-right-radius: 0 !important;
+    border-bottom-left-radius: 0 !important
+}
+
+.mytabcontent {
+    border: 1px;
+    border-style: solid;
+    border-top-style: none;
+    padding: 10px;
+    border-bottom-left-radius: 2px;
+    border-bottom-right-radius: 2px;
+    border-top-right-radius: 2px;
+}
+
+.order-search {
+    padding-bottom: 30px;
+}
+
+
+    .megabutton {
+    float: right;
+    font-size: 20px;
+    padding: 10px;
+    color: #333;
+    background-color: #fff;
+    border-color: #ccc;
+}
+
+.table-bitcoins {
+    float: left;
+    padding-left: 15px;
+    padding-right: 15px;
+    vertical-align: middle !important;
+}
+
+.bitcoinlist.bitcoinlist td {
+    height: 30px;
+    vertical-align: middle;
+}
+
+tr.clickable.clickable > td {
+    vertical-align: middle;
+}
+
+.column-price {
+    width: 110px;
+    font-size: 16px;
+    font-weight: bold;
+    color: green;
+}
+
+.search-form-button {
+    font-weight: bold;
+    color: #f58220;
+    border-color: #f58220;
+    background-color: #ffffff;
+    outline: none;
+    box-shadow: none;
+}
+
+    .search-form-button:focus, .search-form-button:active:focus, .search-form-button.active:focus {
+        outline: none;
+        box-shadow: none;
+    }

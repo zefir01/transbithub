@@ -1,0 +1,89 @@
+syntax = "proto3";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+import "Protos/api.proto";
+
+
+option csharp_namespace = "Protos.Adminka.V1";
+package AdminkaSchema.V1;
+
+message GetDisputesRequest{
+  uint32 Skip = 1;
+  uint32 Take = 2;
+}
+
+message Dispute{
+  uint64 DealId = 1;
+  string ArbitorId = 2;
+  google.protobuf.Timestamp CreatedAt = 3;
+  string PaymentType = 4;
+  string FiatCurrency = 5;
+  bool IsBuy = 6;
+  CoreSchema.V1.Decimal FiatAmount = 7;
+  CoreSchema.V1.UserInfo AdOwnerInfo = 8;
+  CoreSchema.V1.UserInfo Initiator = 9;
+  bool Completed = 10;
+}
+
+message DisputeEvent{
+  oneof Data{
+    Dispute Dispute = 1;
+    bool KeepAlive = 2;
+  }
+}
+message GetDisputesResponse{
+  repeated Dispute Disputes = 1;
+}
+message DisputeRequest{
+  uint64 DisputeId = 1;
+}
+message GiveAwayDisputeRequest{
+  uint64 DisputeId = 1;
+  string UserId = 2;
+}
+message SupportAccount{
+  string Username = 1;
+  string Id = 2;
+}
+message GetSupportAccountsResponse{
+  repeated SupportAccount SupportAccounts = 1;
+}
+message TransferDisputeRequest{
+  uint64 DisputeId = 1;
+  string SupportAccountId = 2;
+}
+message CompleteDisputeRequest{
+  uint64 DisputeId = 1;
+}
+message CancelDisputeRequest{
+  uint64 DisputeId = 1;
+}
+message Profile{
+  string UserId = 1;
+  string UserName = 2;
+}
+message GetDealRequest{
+  uint64 DealId = 1;
+}
+
+
+service Adminka{
+  rpc GetUserFeedbacks (CoreSchema.V1.GetUserFeedbacksRequest) returns (CoreSchema.V1.GetUserFeedbacksResponse);
+  rpc MarkEventsAsRead (CoreSchema.V1.MarkEventsAsReadRequest) returns (google.protobuf.Empty);
+  rpc GetDeal(GetDealRequest) returns (CoreSchema.V1.Deal);
+  rpc GetMyProfile (google.protobuf.Empty) returns (Profile);
+  rpc GetUserInfo (CoreSchema.V1.GetUserInfoRequest) returns (CoreSchema.V1.GetUserInfoResponse);
+  rpc StoreImage(CoreSchema.V1.StoreImageRequest) returns (CoreSchema.V1.Image);
+  rpc GetImage(CoreSchema.V1.GetImageRequest) returns (CoreSchema.V1.Image);
+  rpc SendMessage (CoreSchema.V1.SendMessageRequest) returns (CoreSchema.V1.Deal);
+  rpc CancelDispute(CancelDisputeRequest) returns (Dispute);
+  rpc CompleteDispute(CompleteDisputeRequest) returns (Dispute);
+  rpc GetSupportAccounts(google.protobuf.Empty) returns(GetSupportAccountsResponse);
+  rpc ToWorkDispute(DisputeRequest) returns(Dispute);
+  rpc StopWorkDispute(DisputeRequest) returns(Dispute);
+  rpc GiveAwayDispute(GiveAwayDisputeRequest) returns(Dispute);
+  rpc GetMyDisputes(google.protobuf.Empty) returns (GetDisputesResponse);
+  rpc SubscribeDisputes(google.protobuf.Empty) returns (stream DisputeEvent);
+  rpc SubscribeNewEvents (google.protobuf.Empty) returns (stream CoreSchema.V1.Event);
+  rpc SubscribeVariables (google.protobuf.Empty) returns (stream CoreSchema.V1.Variables);
+}

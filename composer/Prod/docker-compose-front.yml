@@ -1,0 +1,231 @@
+version: '3.3'
+
+services:
+  envoy:
+    restart: always
+    image: ${ENVOY_TAG}
+    extra_hosts:
+      - "tor:10.3.0.1"
+      - "tor:10.3.0.5"
+      - "tor:10.3.0.9"
+      - "tor:10.3.0.13"
+      - "tor:10.3.0.17"
+      - "tor:10.3.0.21"
+      - "tor:10.3.0.25"
+      - "tor:10.3.0.29"
+      - "tor:10.3.0.33"
+      - "tor:10.3.0.37"
+      - "tor:10.3.0.41"
+      - "tor:10.3.0.45"
+      - "tor:10.3.0.49"
+      - "tor:10.3.0.53"
+      - "tor:10.3.0.57"
+      - "tor:10.3.0.61"
+      - "tor:10.3.0.65"
+      - "tor:10.3.0.69"
+      - "tor:10.3.0.73"
+      - "tor:10.3.0.77"
+      - "tor:10.3.0.81"
+      - "tor:10.3.0.85"
+      - "tor:10.3.0.89"
+      - "tor:10.3.0.93"
+      - "tor:10.3.0.97"
+      - "tor:10.3.0.101"
+      - "tor:10.3.0.105"
+      - "tor:10.3.0.109"
+      - "tor:10.3.0.113"
+      - "tor:10.3.0.117"
+      - "tor:10.3.0.121"
+    configs:
+      - source: envoy-transbithub-yaml
+        target: /etc/envoy/envoy.yaml
+      - source: transbithub-com-pem
+        target: /etc/envoy/transbithub.com.pem
+      - source: transbithub-com-key
+        target: /etc/envoy/transbithub.com.key
+      - source: api-transbithub-com-pem
+        target: /etc/envoy/api.transbithub.com.pem
+      - source: api-transbithub-com-key
+        target: /etc/envoy/api.transbithub.com.key
+      - source: mail-transbithub-com-pem
+        target: /etc/envoy/mail.transbithub.com.pem
+      - source: mail-transbithub-com-key
+        target: /etc/envoy/mail.transbithub.com.key
+    environment:
+      - "ENVOY_UID=0"
+    ports:
+      - target: 80
+        published: 80
+        protocol: tcp
+        mode: host
+      - target: 443
+        published: 443
+        protocol: tcp
+        mode: host
+      - target: 9735
+        published: 9735
+        protocol: tcp
+        mode: host
+      - target: 9901
+        published: 9901
+        protocol: tcp
+        mode: host
+      - target: 1001
+        published: 1001
+        protocol: tcp
+        mode: host
+    depends_on:
+      - front
+      - landing
+
+  front:
+    restart: always
+    image: ${FRONT_TAG}
+#    ports:
+#      - 80
+
+  docs-static:
+    restart: always
+    image: ${DOCS_TAG}
+    deploy:
+      endpoint_mode: dnsrr
+
+  mail:
+    restart: always
+    image: prod:5002/mail
+    ports:
+      - target: 25
+        published: 25
+        protocol: tcp
+        mode: host
+    configs:
+      - source: exim-front-conf
+        target: /etc/exim4/exim.conf
+      - source: transbithub-com-public-dkim
+        target: /etc/exim4/transbithub.com.public
+      - source: transbithub-com-key-dkim
+        target: /etc/exim4/transbithub.com.key
+
+  node_exporter:
+    restart: always
+    image: quay.io/prometheus/node-exporter:latest
+    command:
+      - '--path.rootfs=/host'
+    volumes:
+      - '/:/host:ro,rslave'
+    ports:
+      - "9100:9100"
+
+  docker-exporter:
+    restart: always
+    image: prom/container-exporter
+    ports:
+      - "9104:9104"
+    volumes:
+      - /sys/fs/cgroup:/cgroup
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  dns-external:
+    restart: always
+    build: ../../Dns/
+    image: prod:5002/dns
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+    configs:
+      - source: transbithub-conf
+        target: /etc/bind/zones/transbithub.com.conf
+      - source: transbithub-zone
+        target: /etc/bind/zones/transbithub.com.zone
+    
+  squid:
+    restart: always
+    image: sameersbn/squid
+    ports:
+      - "3128:3128"
+    configs:
+      - source: squid-conf
+        target: /etc/squid/squid.conf
+        
+        #  mariadb:
+        #    image: mariadb:latest
+        #    restart: always
+        #    volumes:
+        #      - mariadb:/var/lib/mysql
+        #    environment:
+        #      MYSQL_ROOT_PASSWORD: "Batman01"
+        #      MYSQL_DATABASE: wordpress
+        #      MYSQL_USER: wordpress
+        #      MYSQL_PASSWORD: wordpress
+
+        #  wordpress:
+        #    depends_on:
+        #      - mariadb
+        #    image: ${WORDPRESS_TAG}
+        #    restart: always
+        #    environment:
+        #      WORDPRESS_DB_HOST: "mariadb:3306"
+        #      WORDPRESS_DB_USER: wordpress
+        #      WORDPRESS_DB_PASSWORD: wordpress
+        #      WORDPRESS_DB_NAME: wordpress
+        #    volumes:
+        #      - wordpress:/var/www/html
+  landing:
+    restart: always
+    image: ${LANDING_TAG}
+    environment:
+      NEXT_PUBLIC_YM_ID: "73005085"
+      DATABASE_URL: 'postgresql://globalbitcoins:globalbitcoins@31.13.195.60:5432/aggregator?schema=public'
+    deploy:
+      endpoint_mode: dnsrr
+
+
+#  ftp:
+#    restart: always
+#    depends_on:
+#      - wordpress
+#    image: bogem/ftp
+#    environment:
+#      FTP_USER: admin
+#      FTP_PASS: "chahm0VoShohpoov"
+#      PASV_ADDRESS: "31.13.195.53"
+#    ports:
+#      - "20:20"
+#      - "21:21"
+#      - "47400-47470:47400-47470"
+#    volumes:
+#      - wordpress:/home/vsftpd
+
+
+        
+configs:
+  envoy-transbithub-yaml:
+    file: ./envoy/envoy.transbithub.yaml
+  transbithub-com-pem:
+    file: ./envoy/transbithub.com.pem
+  transbithub-com-key:
+    file: ./envoy/transbithub.com.key
+  api-transbithub-com-pem:
+    file: ./envoy/api.transbithub.com.pem
+  api-transbithub-com-key:
+    file: ./envoy/api.transbithub.com.key
+  exim-front-conf:
+    file: ./mail/exim-front.conf
+  transbithub-com-public-dkim:
+    file: ./mail/transbithub.com.public
+  transbithub-com-key-dkim:
+    file: ./mail/transbithub.com.key
+  squid-conf:
+    file: ./squid.conf
+  transbithub-conf:
+    file: ./bind/transbithub.com.conf
+  transbithub-zone:
+    file: ./bind/transbithub.com.zone
+  mail-transbithub-com-pem:
+    file: ./envoy/mail.transbithub.com.pem
+  mail-transbithub-com-key:
+    file: ./envoy/mail.transbithub.com.key
+
+volumes:
+  mariadb:
+  wordpress:

@@ -1,0 +1,64 @@
+truncate table advertisements cascade;
+truncate table blocked_users cascade;
+truncate table complaints cascade;
+truncate table deals cascade;
+truncate table dispute cascade;
+truncate table feedbacks cascade;
+truncate table "message" cascade;
+truncate table time_tables cascade;
+truncate table user_datas cascade;
+truncate table user_events cascade;
+truncate table variables cascade;
+truncate table wallets cascade;
+truncate table public_input_addresses cascade;
+truncate table transactions cascade;
+
+
+truncate table asp_net_role_claims cascade;
+truncate table asp_net_roles cascade;
+truncate table asp_net_user_claims cascade;
+truncate table asp_net_user_logins cascade;
+truncate table asp_net_user_roles cascade;
+truncate table asp_net_user_tokens cascade;
+truncate table asp_net_users cascade;
+truncate table persisted_grants cascade;
+truncate table sign_ins cascade;
+
+
+
+drop table advertisements cascade;
+drop table blocked_users cascade;
+drop table complaints cascade;
+drop table deals cascade;
+drop table disputes cascade;
+drop table feedbacks cascade;
+drop table "deal_message" cascade;
+drop table time_tables cascade;
+drop table user_datas cascade;
+drop table user_events cascade;
+drop table variables cascade;
+drop table btc_core_wallets cascade;
+drop table in_addresses cascade;
+drop table in_transactions cascade;
+
+drop table ad_metadata cascade;
+drop table ad_metadata_snapshot cascade;
+drop table advertisement_snapshot cascade;
+drop table balances cascade;
+drop table jira_creds cascade;
+drop table out_transaction_requests cascade;
+drop table out_transactions cascade;
+drop table time_table_item_snapshot cascade;
+drop table trusted_users cascade;
+drop table user_data_snapshot cascade;
+drop table "__EFMigrationsHistory" cascade;
+
+drop table asp_net_role_claims cascade;
+drop table asp_net_roles cascade;
+drop table asp_net_user_claims cascade;
+drop table asp_net_user_logins cascade;
+drop table asp_net_user_roles cascade;
+drop table asp_net_user_tokens cascade;
+drop table asp_net_users cascade;
+drop table persisted_grants cascade;
+drop table sign_ins cascade;

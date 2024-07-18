@@ -1,0 +1,979 @@
+syntax = "proto3";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+
+option csharp_namespace = "Protos.TradeApi.V1";
+
+
+package CoreSchema.V1;
+
+message Decimal {
+  // Whole units part of the amount
+  int64 units = 1;
+  // Nano units of the amount (10^-9)
+  // Must be same sign as units
+  sfixed32 nanos = 2;
+}
+
+message BoughtOptions{
+  uint32 AutoPriceRecalcs = 1;
+}
+message Variables {
+  map<string, Decimal> Variables = 1;
+  bool KeepAlive = 2;
+}
+
+message TimeTableItem {
+  string day = 1;
+  uint32 start = 2;
+  uint32 end = 3;
+}
+enum AdCurrentStatus {
+  Enabled = 0;
+  DisabledByOwner = 1;
+  NotEnoughMoney = 2;
+  GlobalDisabled = 3;
+  DisabledByTimetable = 4;
+}
+message AdvertisementData{
+  string Equation = 2;
+  Decimal MinAmount = 3;
+  Decimal MaxAmount = 4;
+  string Message = 6;
+  google.protobuf.Timestamp CreatedAt = 7;
+  string Country = 8;
+  string PaymentType = 9;
+  string FiatCurrency = 10;
+  bool IsBuy = 12;
+  bool IsEnabled = 13;
+  repeated TimeTableItem TimeTable = 15;
+  bool MonitorLiquidity = 16;
+  bool NotAnonymous = 17;
+  bool Trusted = 18;
+  string Title = 19;
+  uint32 window = 20;
+  oneof AutoPrice{
+    bool AutoPriceDelayIsNull = 21;
+    uint32 AutoPriceDelay = 22;
+  }
+  bool LnFunding = 23;
+  bool LnDisableBalance = 24;
+}
+message ModifyAdvertisementRequest{
+  uint64 AdvertisementId = 1;
+  AdvertisementData Data = 2;
+}
+message Advertisement {
+  uint64 Id = 1;
+  string Equation = 2;
+  Decimal MinAmount = 3;
+  Decimal MaxAmountRequested = 4;
+  Decimal MaxAmountCalculated = 5;
+  string Message = 6;
+  google.protobuf.Timestamp CreatedAt = 7;
+  string Country = 8;
+  string PaymentType = 9;
+  string FiatCurrency = 10;
+  bool IsBuy = 12;
+  bool IsEnabled = 13;
+  UserInfo Owner = 14;
+  repeated TimeTableItem TimeTable = 15;
+  bool MonitorLiquidity = 16;
+  bool NotAnonymous = 17;
+  bool Trusted = 18;
+  string Title = 19;
+  uint32 window = 20;
+  Decimal Price = 21;
+  AdCurrentStatus CurrentStatus = 22;
+  oneof AutoPrice{
+    bool AutoPriceDelayIsNull = 23;
+    uint32 AutoPriceDelay = 24;
+  }
+  bool LnEnabled = 25;
+  bool LnDisableBalance = 26;
+}
+
+message DeleteAdvertisementRequest {
+  uint64 Id = 9;
+}
+message ChangeAdvertisementStatusRequest {
+  uint64 AdvertisementId = 1;
+  bool IsEnabled = 2;
+}
+message ChangeAdvertisementStatusResponse {
+  AdCurrentStatus CurrentStatus = 1;
+}
+message FindAdvertisementsRequest {
+  string Country = 1;
+  string Currency = 2;
+  string PaymentType = 3;
+  Decimal FiatAmount = 4;
+  Decimal CryptoAmount = 5;
+  bool IsBuy = 6;
+  string UserId = 7;
+  uint32 Skip = 8;
+  uint32 Take = 9;
+}
+message FindAdvertisementsResponse {
+  repeated Advertisement Advertisements = 1;
+}
+message GetAdvertisementsByIdRequest {
+  uint64 Id = 1;
+}
+message UserInfo {
+  string Id = 1;
+  string Username = 2;
+  Decimal TradesAvgAmount = 3;
+  uint32 TradesCount = 4;
+  uint32 CounterpartysCount = 5;
+  Decimal ResponseRate = 6;
+  google.protobuf.Timestamp FirstTradeDate = 7;
+  google.protobuf.Timestamp CreatedAt = 8;
+  google.protobuf.Timestamp LastOnline = 9;
+  uint32 TrustedCount = 10;
+  uint32 BlockedCount = 11;
+  uint32 AvgDelaySeconds = 12;
+  uint32 MedianDelaySeconds = 13;
+  string Introduction = 14;
+  string Site = 15;
+  string Timezone = 16;
+  bool IsTrusted = 17;
+  bool IsBlocked = 18;
+  uint32 InvoicesCreatedCount = 19;
+  Decimal PaymentsPayedAvgAmount = 20;
+  uint32 PaymentsPayedCount = 21;
+  Decimal PaymentsReceivedAvgAmount = 22;
+  uint32 PaymentsReceivedCount = 23;
+  Decimal InvoiceResponseRate = 24;
+  bool IsAnonymous = 25;
+}
+message GetUserInfoRequest {
+  string Id = 1;
+}
+message GetUserInfoResponse {
+  UserInfo UserInfo = 1;
+}
+
+message DealMessage {
+  uint64 Id = 1;
+  google.protobuf.Timestamp CreatedAt = 2;
+  string OwnerId = 3;
+  string Text = 4;
+  repeated string ImageIds = 5;
+}
+enum DealStatus {
+  Opened = 0;
+  Completed = 1;
+  Canceled = 2;
+  Disputed = 3;
+  WaitDeposit = 4;
+}
+message Feedback {
+  uint64 Id = 1;
+  bool IsPositive = 2;
+  string Text = 3;
+  google.protobuf.Timestamp CreatedAt = 4;
+}
+message Deal {
+  message WithdrawalStatusMsg{
+    enum StatusEnum{
+      None = 0;
+      Waiting = 1;
+      Started = 2;
+      Success = 3;
+      Failed = 4;
+    }
+    StatusEnum Status = 1;
+    string Error = 2;
+  }
+  uint64 Id = 1;
+  Decimal FiatAmount = 2;
+  Decimal CryptoAmount = 3;
+  google.protobuf.Timestamp CreatedAt = 4;
+  DealStatus Status = 5;
+  google.protobuf.Timestamp CompletedAt = 6;
+  google.protobuf.Timestamp CanceledAt = 7;
+  google.protobuf.Timestamp DisputedAt = 8;
+  bool IsFiatPayed = 10;
+  uint64 DisputeId = 11;
+  Advertisement Advertisement = 12;
+  UserInfo AdOwnerInfo = 13;
+  UserInfo Initiator = 14;
+  repeated DealMessage Messages = 15;
+  string Fee = 16;
+  oneof AdOwnerFeedbackNullable{
+    bool AdOwnerFeedbackIsnull = 17;
+    Feedback AdOwnerFeedback = 18;
+  }
+  oneof InitiatorFeedbackNullable{
+    bool InitiatorFeedbackIsNull = 19;
+    Feedback InitiatorFeedback = 20;
+  }
+  google.protobuf.Timestamp FiatPayedAt = 21;
+  oneof NullablePayment{
+    bool PaymentIsNull = 22;
+    InvoicePayment Payment = 23;
+  }
+  oneof Withdrawal{
+    bool NoWithdrawal = 24;
+    string PromiseWithdrawal = 25;
+    string BitcoinWithdrawal = 26;
+    string LnWithdrawal = 27;
+  }
+  WithdrawalStatusMsg WithdrawalStatus = 29;
+}
+message GetMyDealsRequest {
+  repeated DealStatus Status = 1;
+  uint64 DealId = 2;
+  int32 LoadCount = 3;
+}
+message GetMyDealsResponse {
+  repeated Deal Deals = 1;
+}
+message CreateDealRequest {
+  uint64 AdvertisementId = 1;
+  oneof Amount{
+    Decimal FiatAmount = 2;
+    Decimal CryptoAmount = 3;
+  }
+  string SellPromise = 4;
+  bool BuyPromise = 5;
+  string PromisePassword = 6;
+  string BtcWallet = 7;
+}
+message CreateDealLnBuyRequest{
+  uint64 AdvertisementId = 1;
+  string LnInvoice = 2;
+  oneof NullableAmount{
+    Decimal FiatAmount = 3;
+    Decimal CryptoAmount = 4;
+    bool AmountIsNull = 5;
+  }
+}
+message CreateDealLnSellRequest{
+  uint64 AdvertisementId = 1;
+  oneof Amount{
+    Decimal FiatAmount = 2;
+    Decimal CryptoAmount = 3;
+  }
+}
+message GetDealByIdRequest {
+  uint64 Id = 1;
+}
+
+message SendMessageRequest {
+  uint64 DealId = 1;
+  string Text = 2;
+  repeated string ImageIds = 3;
+}
+message SendMessageResponse {
+  DealMessage Message = 1;
+}
+message Balance {
+  Decimal Confirmed = 1;
+  Decimal UnConfirmed = 2;
+  Decimal Deposited = 3;
+}
+
+message Event {
+  uint64 id = 1;
+  google.protobuf.Timestamp CreatedAt = 2;
+  oneof content {
+    Deal DealNew = 3;
+    Deal DealStatusChanged = 4;
+    Deal DealNewMessage = 5;
+    Deal DealFiatPayed = 6;
+    Deal DealDisputeCreated = 7;
+    Balance Balance = 8;
+    bool KeepAlive = 9;
+    Invoice InvoiceNew = 10;
+    Invoice InvoicePayed = 11;
+    Invoice InvoiceDeleted = 12;
+    InvoicePayment InvoicePaymentNew = 13;
+    Conversation ConversationNewMessage = 14;
+    InvoicePayment InvoicePaymentUpdated = 15;
+  }
+}
+
+message MarkEventsAsReadRequest {
+  repeated uint64 Id = 1;
+}
+
+message CancelDealRequest {
+  uint64 DealId = 1;
+}
+message CancelDealResponse {
+  Deal deal = 1;
+}
+message IPayedRequest {
+  uint64 DealId = 1;
+}
+message IPayedResponse {
+  Deal deal = 1;
+}
+message CreateDisputeRequest {
+  uint64 DealId = 1;
+}
+message CreateDisputeResponse {
+  Deal deal = 1;
+}
+message SendFeedbackRequest {
+  uint64 DealId = 1;
+  bool IsPositive = 2;
+  string Text = 3;
+}
+message GetUserFeedbacksRequest {
+  string UserId = 1;
+  int64 startId = 2;
+  int32 count = 3;
+  bool IsDealsFeedbacks = 4;
+}
+message GetUserFeedbacksResponse {
+  repeated Feedback Feedbacks = 1;
+}
+message SubscribeAdvertisementChangesResponse {
+  oneof content {
+    Advertisement Advertisement = 1;
+    bool AdDeleted = 2;
+    bool KeepAlive = 3;
+  }
+}
+message AddUserToTrustedRequest {
+  string UserId = 1;
+}
+message CreateUserComplaintRequest {
+  string UserId = 1;
+  string Text = 2;
+  string Contact = 3;
+}
+message BlockUserRequest {
+  string UserId = 1;
+}
+message UnBlockUserRequest {
+  string UserId = 1;
+}
+message GetMyTrustedUsersResponse {
+  repeated UserInfo Users = 1;
+}
+message RemoveFromTrustedRequest {
+  string UserId = 1;
+}
+message GetMyBlockedUsersResponse {
+  repeated UserInfo Users = 1;
+}
+message IsUserTrustedRequest {
+  string UserId = 1;
+}
+message IsUserBlockedRequest {
+  string UserId = 1;
+}
+message IsUserTrustedResponse {
+  bool IsTrusted = 1;
+}
+message IsUserBlockedResponse {
+  bool IsBlocked = 1;
+}
+message Transaction {
+  uint64 Id = 1;
+  string TxId = 2;
+  Decimal Amount = 3;
+  uint32 Confirmations = 4;
+  string To = 5;
+  google.protobuf.Timestamp Time = 6;
+}
+message GetTransactionsRequest {
+  bool IsInput = 1;
+  uint64 LastId = 2;
+  uint32 Count = 3;
+}
+message GetTransactionsResponse {
+  repeated Transaction Transactions = 1;
+}
+message GetTransactionByIdRequest {
+  repeated string TxId = 1;
+  bool IsInput = 2;
+}
+message BtcAddress {
+  string legacy = 1;
+  string bech32 = 2;
+}
+message GetInputAddressResponse {
+  BtcAddress BtcAddress = 1;
+}
+message CreateTransactionRequest {
+  Decimal Amount = 1;
+  string TargetAddress = 2;
+}
+message GetFeesResponse {
+  Decimal Fee = 1;
+}
+message AllAdvertisementsStatus {
+  bool SalesDisabled = 1;
+  bool BuysDisabled = 2;
+}
+message IsUserExistRequest {
+  string UserName = 1;
+}
+message IsUserExistResponse {
+  bool isExist = 1;
+}
+message Webhook{
+  string ClientCrt = 1;
+  string ClientKey = 2;
+  string ServerCrt = 3;
+  string Url = 4;
+  bool Required = 5;
+}
+message Invoice {
+  enum InvoiceStatus
+  {
+    Active = 0;
+    PendingPay = 1;
+    NoPieces = 2;
+    Payed = 3;
+    Deleted = 4;
+  }
+  enum ServiceType
+  {
+    None = 0;
+    AutoPrice = 1;
+  }
+  uint64 Id = 1;
+  bool isPrivate = 2;
+  bool isBaseCrypto = 3;
+  Decimal Price = 4;
+  string FiatCurrency = 5;
+  string PriceVariable = 6;
+  uint32 TtlMinutes = 7;
+  string Comment = 8;
+  uint32 PiecesMin = 9;
+  uint32 PiecesMax = 10;
+
+  InvoiceStatus Status = 11;
+  Decimal TotalPayedCrypto = 12;
+  uint32 PaymentsCount = 13;
+  UserInfo Owner = 14;
+  oneof NullableTargetUser{
+    bool TargetUserIsNull = 15;
+    UserInfo TargetUser = 16;
+  }
+  google.protobuf.Timestamp CreatedAt = 17;
+  google.protobuf.Timestamp ValidTo = 18;
+  Decimal Fee = 19;
+  bool LimitLiquidity = 20;
+  Decimal CurrentCryptoPrice = 21;
+  oneof NullableRefund{
+    bool RefundIsNull = 22;
+    uint64 RefundPaymentId = 23;
+  }
+  ServiceType Service = 24;
+  repeated string Images = 25;
+  uint32 SecretsCount = 26;
+  oneof Integration{
+    bool NoIntegration = 27;
+    string Redirect = 28;
+    Webhook Webhook = 29;
+  }
+}
+message CreateInvoiceRequest {
+  bool isPrivate = 1;
+  bool isBaseCrypto = 2;
+  string UserName = 3;
+  Decimal Price = 4;
+  string FiatCurrency = 5;
+  string PriceVariable = 6;
+  uint32 TtlMinutes = 7;
+  string Comment = 8;
+  uint32 PiecesMin = 9;
+  uint32 PiecesMax = 10;
+  bool LimitLiquidity = 11;
+  repeated string Images = 12;
+  repeated CreateInvoiceSecretRequest Secrets = 13;
+  oneof Integration{
+    bool NoIntegration = 14;
+    string Redirect = 15;
+    Webhook Webhook = 16;
+  }
+}
+message UpdatePublicInvoiceRequest{
+  uint64 InvoiceId = 1;
+  bool isBaseCrypto = 2;
+  Decimal Price = 3;
+  string FiatCurrency = 4;
+  string PriceVariable = 5;
+  string Comment = 6;
+  uint32 PiecesMin = 7;
+  uint32 PiecesMax = 8;
+  bool LimitLiquidity = 9;
+  repeated string Images = 10;
+  oneof Integration{
+    bool NoIntegration = 11;
+    string Redirect = 12;
+    Webhook Webhook = 13;
+  }
+}
+message SubscribePublicInvoiceRequest{
+  uint64 InvoiceId = 1;
+}
+message SubscribePublicInvoiceResponse {
+  oneof content {
+    Invoice Invoice = 1;
+    bool InvoiceDeleted = 2;
+    bool KeepAlive = 3;
+  }
+}
+message DeleteInvoiceRequest {
+  uint64 InvoiceId = 1;
+}
+message DeleteInvoiceResponse{
+  oneof Refund{
+    bool  RefundIsNull = 1;
+    InvoicePayment PaymentRefund = 2;
+  }
+}
+message GetInvoicesRequest {
+  bool IsOwner = 1;
+  bool isOwnerHasValue = 2;
+  repeated Invoice.InvoiceStatus Statuses = 3;
+  bool IsPrivate = 5;
+  bool IsPrivateHasValue = 6;
+  uint64 Id = 7;
+  string ToUser = 8;
+  uint64 lastId = 9;
+  uint32 count = 10;
+}
+message GetInvoicesResponse {
+  repeated Invoice Invoices = 1;
+}
+message GetInvoiceByIdRequest {
+  uint64 InvoiceId = 1;
+}
+message PayInvoiceFromBalanceRequest{
+  uint64 InvoiceId = 1;
+  uint32 Pieces = 2;
+}
+
+message InvoicePayment{
+  enum InvoicePaymentStatus
+  {
+    Pending = 0;
+    Paid = 1;
+    Canceled = 2;
+  }
+  uint64 Id = 1;
+  Decimal CryptoAmount = 2;
+  google.protobuf.Timestamp CreatedAt = 3;
+  string Confirmation = 4;
+  UserInfo Owner = 5;
+  Invoice Invoice = 6;
+  oneof NullableSellerFeedback{
+    bool SellerFeedbackIsNull = 7;
+    Feedback SellerFeedback = 8;
+  }
+  oneof NullableOwnerFeedback{
+    bool OwnerFeedbackIsNull = 9;
+    Feedback OwnerFeedback = 10;
+  }
+  InvoicePaymentStatus Status = 11;
+  oneof NullableDeal{
+    bool DealIsNull = 12;
+    Deal Deal = 13;
+  }
+  uint32 Pieces = 14;
+  bool IsRefund = 16;
+  repeated Invoice Refunds = 17;
+  uint32 Refunded = 18;
+  uint32 Refunding = 19;
+  string OddPromise = 20;
+  repeated InvoiceSecret Secrets = 21;
+  string LNInvoice = 22;
+}
+message GetInvoicePaymentsRequest{
+  uint64 PaymentId = 1;
+  bool IsToMe = 2;
+  bool IsToMeHasValue = 3;
+  uint64 LastId = 4;
+  uint32 Count = 5;
+}
+message GetInvoicePaymentsResponse{
+  repeated InvoicePayment Payments = 1;
+}
+message LastAdSearchParams{
+  string Country = 1;
+  string Currency = 2;
+  string PaymentType = 3;
+  Decimal Amount = 4;
+}
+message GetLastAdSearchParamsResponse{
+  bool LastBuySearchHasValue = 1;
+  bool LastSellSearchHasValue = 2;
+  LastAdSearchParams LastBuySearch = 3;
+  LastAdSearchParams LastSellSearch = 4;
+}
+message SendInvoicePaymentFeedbackRequest{
+  uint64 PaymentId = 1;
+  Feedback Feedback = 2;
+}
+message PayInvoiceByBestDealRequest{
+  string Country = 1;
+  string Currency = 2;
+  string PaymentType = 3;
+  uint64 InvoiceId = 4;
+  uint32 Pieces = 5;
+}
+message GetInvoiceSuitableAdvertisementsRequest{
+  string Country = 1;
+  string Currency = 2;
+  string PaymentType = 3;
+  uint64 InvoiceId = 4;
+  uint32 Pieces = 5;
+  uint32 Skip = 6;
+  uint32 Count = 7;
+}
+message GetInvoiceSuitableAdvertisementResponse{
+  repeated Advertisement Advertisements = 1;
+}
+message PayInvoiceByDealRequest{
+  uint64 InvoiceId = 1;
+  uint32 Pieces = 2;
+  uint64 AdvertisementId = 3;
+}
+message CancelInvoicePaymentRequest{
+  uint64 PaymentId = 1;
+}
+message ConversationMessage {
+  uint64 Id = 1;
+  string OwnerId = 2;
+  string Text = 3;
+  google.protobuf.Timestamp CreatedAt = 4;
+  repeated string Images = 5;
+}
+message Conversation{
+  uint64 Id = 1;
+  UserInfo Seller = 2;
+  UserInfo Buyer = 3;
+  oneof Parent{
+    Invoice Invoice = 4;
+    InvoicePayment Payment = 5;
+  }
+  repeated ConversationMessage Messages = 6;
+}
+
+message SendInvoiceMessageRequest{
+  string ToUserId = 1;
+  uint64 InvoiceId = 2;
+  string Text = 3;
+  repeated string ImageIds = 4;
+}
+message SendInvoicePaymentMessageRequest{
+  uint64 PaymentId = 1;
+  string Text = 2;
+  repeated string ImageIds = 3;
+}
+message GetConversationsResponse{
+  repeated Conversation Conversations = 1;
+}
+message GetConversationsByIdRequest{
+  oneof Ids{
+    uint64 InvoiceId = 1;
+    uint64 PaymentId = 2;
+    string UserId = 3;
+  }
+}
+message DeleteConversationRequest{
+  uint64 ConversationId = 1;
+}
+message CreateRefundRequest{
+  uint64 PaymentId = 1;
+  uint32 Pieces = 2;
+}
+message CreateRefundResponse{
+  InvoicePayment Payment = 1;
+  Invoice Refund = 2;
+}
+message BuyAutoPriceRecalcsRequest{
+  uint32 Recalcs = 1;
+}
+message CreatePromiseRequest{
+  Decimal Amount = 1;
+  string Password = 2;
+}
+message CreatePromiseResponse{
+  string Promise = 1;
+  Balance Balance = 2;
+}
+
+message PromiseToBalanceRequest{
+  string Promise = 1;
+  string Password = 2;
+}
+message PromiseSellByBestDealRequest{
+  string Country = 1;
+  string Currency = 2;
+  string PaymentType = 3;
+  string Promise = 4;
+  string Password = 5;
+}
+message GetPromiseSuitableAdvertisementsRequest{
+  string Country = 1;
+  string Currency = 2;
+  string PaymentType = 3;
+  string Promise = 4;
+  string Password = 5;
+  uint32 Skip = 6;
+  uint32 Count = 7;
+}
+message GetPromiseSuitableAdvertisementsResponse{
+  repeated Advertisement Advertisements = 1;
+  repeated Decimal FiatAmounts = 2;
+  Decimal PromiseAmount = 3;
+}
+message PromiseSellByDealRequest{
+  string Promise = 1;
+  string Password = 2;
+  uint64 AdvertisementId = 3;
+}
+message PayInvoiceByPromiseRequest{
+  enum OddTypes{
+    noOdd = 0;
+    toBalance = 1;
+    toPromise = 2;
+  }
+  string Promise = 1;
+  string Password = 2;
+  uint64 InvoiceId = 3;
+  uint32 Pieces = 4;
+  OddTypes OddType = 5;
+}
+message Image{
+  string Id = 1;
+  google.protobuf.Timestamp CreatedAt = 2;
+  bytes Preview = 3;
+  bytes Original = 4;
+  bool IsPreview = 5;
+}
+message StoreImageRequest{
+  string Id = 1;
+  bytes Data = 2;
+}
+message GetImageRequest{
+  string Id = 1;
+  bool IsPreview = 2;
+}
+message InvoiceSecret{
+  uint64 Id = 1;
+  string Text = 2;
+  repeated string Images = 3;
+  uint32 Order = 4;
+  oneof NullablePayment{
+    bool PaymentIdIsNull = 5;
+    uint64 PaymentId = 6;
+  }
+  string Url = 7;
+}
+message InvoiceSecretsList{
+  repeated InvoiceSecret Secrets = 1;
+}
+message GetInvoiceSecretsRequest{
+  uint64 InvoiceId = 1;
+  bool isSold = 2;
+}
+message ChangeInvoiceSecretRequest{
+  enum SecretOperations{
+    ToUp = 0;
+    ToDown = 1;
+    ToTop = 2;
+    ToBottom = 3;
+    Remove = 5;
+  }
+  uint64 SecretId = 1;
+  SecretOperations Operation = 2;
+}
+message CreateInvoiceSecretRequest{
+  uint64 InvoiceId = 1;
+  string Text = 2;
+  repeated string Images = 3;
+  uint32 Order = 4;
+}
+message UpdateInvoiceSecretRequest{
+  uint64 SecretId = 2;
+  string Text = 3;
+  repeated string Images = 4;
+  uint32 Order = 5;
+}
+
+message PayInvoiceFromLNRequest{
+  uint64 InvoiceId = 1;
+  uint32 Pieces = 2;
+}
+message LNWithdrawalRequest{
+  string Invoice = 1;
+  oneof AmountNullable{
+    Decimal Amount = 2;
+    bool AmountIsNull = 3;
+  }
+}
+message LNDepositRequest{
+  Decimal Amount = 1;
+  string Description = 2;
+  uint32 ExpiresIn = 3;
+}
+message LNDepositResponse{
+  string Invoice = 1;
+}
+message LNInvoice{
+  string Id = 1;
+  Decimal Amount = 2;
+  string Description = 3;
+  uint32 ExpiresIn = 4;
+  google.protobuf.Timestamp CreatedAt = 5;
+  string Bolt11 = 6;
+  bool IsPaid = 7;
+  oneof Relations{
+    bool NoRelations = 8;
+    uint64 PaymentId = 9;
+  }
+}
+enum LNPaymentStatus{
+  Started = 0;
+  Pending = 1;
+  Success = 2;
+  Failed = 3;
+}
+message LNPayment{
+  string Id = 1;
+  Decimal Amount = 2;
+  string Description = 3;
+  string Bolt11 = 4;
+  google.protobuf.Timestamp CreatedAt = 5;
+  LNPaymentStatus Status = 6;
+  string Error =7;
+}
+message LNGetInvoicesRequest{
+  uint32 Skip = 1;
+  uint32 Take = 2;
+}
+message LNGetInvoicesResponse{
+  repeated LNInvoice Invoices = 1;
+}
+message LNGetPaymentsRequest{
+  uint32 Skip = 1;
+  uint32 Take = 2;
+}
+message LNGetPaymentsResponse{
+  repeated LNPayment LNPayments = 1;
+}
+message UpdateMyProfileRequest{
+  string Timezone = 1;
+  string Introduction = 2;
+  string Site = 3;
+  bool SalesDisabled = 4;
+  bool BuysDisabled = 5;
+  string DefaultCurrency = 6;
+}
+message MyProfileResponse{
+  string UserId = 1;
+  string Username = 2;
+  string Email = 3;
+  bool EnabledTwoFA = 4;
+  bool EmailVerifed = 5;
+  string Timezone = 6;
+  string Introduction = 7;
+  string Site = 8;
+  bool SalesDisabled = 9;
+  bool BuysDisabled = 10;
+  string DefaultCurrency = 11;
+  BoughtOptions BoughtOptions = 12;
+  bool IsAnonymous = 13;
+}
+message GetUserEventsResponse{
+  repeated Event Events = 1;
+}
+
+service TradeApi {
+  rpc SubscribeVariables (google.protobuf.Empty) returns (stream Variables);
+  rpc GetVariables(google.protobuf.Empty) returns (Variables);
+  rpc CreateAdvertisement (AdvertisementData) returns (Advertisement);
+  rpc DeleteAdvertisement (DeleteAdvertisementRequest) returns (google.protobuf.Empty);
+  rpc ChangeAdvertisementStatus (ChangeAdvertisementStatusRequest) returns (ChangeAdvertisementStatusResponse);
+  rpc ModifyAdvertisement (ModifyAdvertisementRequest) returns (Advertisement);
+  rpc GetMyAdvertisements (google.protobuf.Empty) returns (FindAdvertisementsResponse);
+  rpc GetAdvertisementsById (GetAdvertisementsByIdRequest) returns (Advertisement);
+  rpc GetMyAdvertisementsById (GetAdvertisementsByIdRequest) returns (Advertisement);
+  rpc FindAdvertisements (FindAdvertisementsRequest) returns (FindAdvertisementsResponse);
+  rpc SubscribeAdvertisementChanges (GetAdvertisementsByIdRequest) returns (stream SubscribeAdvertisementChangesResponse);
+  rpc GetUserInfo (GetUserInfoRequest) returns (GetUserInfoResponse);
+  rpc GetMyDeals (GetMyDealsRequest) returns (GetMyDealsResponse);
+  rpc CreateDeal (CreateDealRequest) returns (Deal);
+  rpc CreateDealLnBuy(CreateDealLnBuyRequest) returns (Deal);
+  rpc CreateDealLnSell(CreateDealLnSellRequest) returns (Deal);
+  rpc GetDealById (GetDealByIdRequest) returns (Deal);
+  rpc SendMessage (SendMessageRequest) returns (SendMessageResponse);
+  rpc SubscribeNewEvents (google.protobuf.Empty) returns (stream Event);
+  rpc GetUserEvents (google.protobuf.Empty) returns (GetUserEventsResponse);
+  rpc MarkEventsAsRead (MarkEventsAsReadRequest) returns (google.protobuf.Empty);
+  rpc CancelDeal (CancelDealRequest) returns (CancelDealResponse);
+  rpc IPayed (IPayedRequest) returns (IPayedResponse);
+  rpc CreateDispute (CreateDisputeRequest) returns (CreateDisputeResponse);
+  rpc SendFeedback (SendFeedbackRequest) returns (Deal);
+  rpc GetUserFeedbacks (GetUserFeedbacksRequest) returns (GetUserFeedbacksResponse);
+  rpc AddUserToTrusted (AddUserToTrustedRequest) returns (google.protobuf.Empty);
+  rpc CreateUserComplaint (CreateUserComplaintRequest) returns (google.protobuf.Empty);
+  rpc BlockUser (BlockUserRequest) returns (google.protobuf.Empty);
+  rpc UnBlockUser (UnBlockUserRequest) returns (google.protobuf.Empty);
+  rpc GetMyBlockedUsers (google.protobuf.Empty) returns (GetMyBlockedUsersResponse);
+  rpc GetMyTrustedUsers (google.protobuf.Empty) returns (GetMyTrustedUsersResponse);
+  rpc RemoveFromTrustedUsers (RemoveFromTrustedRequest) returns (google.protobuf.Empty);
+  rpc IsUserTrusted (IsUserTrustedRequest) returns (IsUserTrustedResponse);
+  rpc IsUserBlocked (IsUserBlockedRequest) returns (IsUserBlockedResponse);
+  rpc GetTransactions (GetTransactionsRequest) returns (GetTransactionsResponse);
+  rpc GetTransactionsById (GetTransactionByIdRequest) returns (GetTransactionsResponse);
+  rpc GetInputAddress (google.protobuf.Empty) returns (GetInputAddressResponse);
+  rpc CreateTransaction (CreateTransactionRequest) returns (google.protobuf.Empty);
+  rpc GetFees (google.protobuf.Empty) returns (GetFeesResponse);
+  rpc GetAllAdvertisementsStatus (google.protobuf.Empty) returns (AllAdvertisementsStatus);
+  rpc SetAllAdvertisementsStatus (AllAdvertisementsStatus) returns (MyProfileResponse);
+  rpc IsUserExist (IsUserExistRequest) returns (IsUserExistResponse);
+  rpc CreateInvoice (CreateInvoiceRequest) returns (Invoice);
+  rpc UpdatePublicInvoice (UpdatePublicInvoiceRequest) returns (Invoice);
+  rpc DeleteInvoice (DeleteInvoiceRequest) returns (DeleteInvoiceResponse);
+  rpc GetInvoices (GetInvoicesRequest) returns (GetInvoicesResponse);
+  rpc GetInvoiceById(GetInvoiceByIdRequest) returns (GetInvoicesResponse);
+  rpc GetInvoicePayments(GetInvoicePaymentsRequest) returns (GetInvoicePaymentsResponse);
+  rpc SubscribePublicInvoice(SubscribePublicInvoiceRequest) returns(stream SubscribePublicInvoiceResponse);
+  rpc GetLastAdSearchParams(google.protobuf.Empty) returns (GetLastAdSearchParamsResponse);
+  rpc SendInvoicePaymentFeedback(SendInvoicePaymentFeedbackRequest) returns (InvoicePayment);
+  rpc PayInvoiceFromBalance(PayInvoiceFromBalanceRequest) returns (InvoicePayment);
+  rpc PayInvoiceByBestDeal(PayInvoiceByBestDealRequest) returns (InvoicePayment);
+  rpc GetInvoiceSuitableAdvertisements(GetInvoiceSuitableAdvertisementsRequest) returns (GetInvoiceSuitableAdvertisementResponse);
+  rpc PayInvoiceByDeal(PayInvoiceByDealRequest) returns (InvoicePayment);
+  rpc CancelInvoicePayment(CancelInvoicePaymentRequest) returns (InvoicePayment);
+  rpc SendInvoiceMessage(SendInvoiceMessageRequest) returns (Conversation);
+  rpc SendInvoicePaymentMessage(SendInvoicePaymentMessageRequest) returns (Conversation);
+  rpc GetConversations(google.protobuf.Empty) returns (GetConversationsResponse);
+  rpc GetConversationsById(GetConversationsByIdRequest) returns (GetConversationsResponse);
+  rpc DeleteConversation(DeleteConversationRequest) returns (google.protobuf.Empty);
+  rpc CreateRefund(CreateRefundRequest) returns (CreateRefundResponse);
+  rpc BuyAutoPriceRecalcs(BuyAutoPriceRecalcsRequest) returns (Invoice);
+  rpc GetMyProfile (google.protobuf.Empty) returns (MyProfileResponse);
+  rpc CreatePromise(CreatePromiseRequest) returns (CreatePromiseResponse);
+  rpc PromiseToBalance(PromiseToBalanceRequest) returns (Balance);
+  rpc PromiseSellByBestDeal(PromiseSellByBestDealRequest) returns (Deal);
+  rpc GetPromiseSuitableAdvertisements(GetPromiseSuitableAdvertisementsRequest) returns(GetPromiseSuitableAdvertisementsResponse);
+  rpc PromiseSellByDeal(PromiseSellByDealRequest) returns (Deal);
+  rpc PayInvoiceByPromise(PayInvoiceByPromiseRequest) returns (InvoicePayment);
+  rpc StoreImage(StoreImageRequest) returns (Image);
+  rpc GetImage(GetImageRequest) returns (Image);
+  rpc GetInvoiceSecrets(GetInvoiceSecretsRequest) returns (InvoiceSecretsList);
+  rpc ChangeInvoiceSecret(ChangeInvoiceSecretRequest) returns (InvoiceSecretsList);
+  rpc CreateInvoiceSecret(CreateInvoiceSecretRequest) returns (InvoiceSecretsList);
+  rpc UpdateInvoiceSecret(UpdateInvoiceSecretRequest) returns (InvoiceSecretsList);
+  rpc PayInvoiceFromLN(PayInvoiceFromLNRequest) returns (InvoicePayment);
+  rpc LNDeposit(LNDepositRequest) returns (LNDepositResponse);
+  rpc LNWithdrawal(LNWithdrawalRequest) returns (Balance);
+  rpc LNGetInvoices(LNGetInvoicesRequest) returns (LNGetInvoicesResponse);
+  rpc LNGetPayments (LNGetPaymentsRequest) returns (LNGetPaymentsResponse);
+  rpc UpdateMyProfile (UpdateMyProfileRequest) returns(google.protobuf.Empty);
+  rpc GetBalances (google.protobuf.Empty) returns(Balance);
+}

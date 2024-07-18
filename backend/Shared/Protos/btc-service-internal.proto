@@ -1,0 +1,17 @@
+syntax = "proto3";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+option csharp_namespace = "BtcService.Protos.Internal";
+package InternalSchema;
+
+message CreateBtcInputAddressRequest{
+  bool IsBech32 = 1;
+}
+message CreateBtcInputAddressResponse{
+  string Address = 1;
+}
+
+service Internal{
+  rpc CreateBtcInputAddress(CreateBtcInputAddressRequest) returns (CreateBtcInputAddressResponse);
+}

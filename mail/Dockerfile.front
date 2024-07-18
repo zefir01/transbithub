@@ -1,0 +1,6 @@
+FROM debian:stable-slim
+RUN apt update && apt install exim4-daemon-heavy tini -y && apt clean
+EXPOSE 25 143
+ENTRYPOINT ["tini", "--"]
+CMD ["exim", "-C", "/etc/exim4/exim.conf",  "-bd", "-v", "-d+all"]
+

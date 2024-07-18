@@ -1,0 +1,49 @@
+﻿@page "/confirm_email"
+@model Auth.Pages.EmailConfirmationModel
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>
+        @Model.Config.SiteName
+    </title>
+    <base href="~/app/"/>
+    <link rel="stylesheet" href="/app/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/app/css/ionicons.min.css">
+    <link href="/app/css/font-awesome.min.css" rel="stylesheet">
+    <link href="/app/css/site.css" rel="stylesheet"/>
+
+</head>
+<body>
+<app>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 col-12 justify-content-center">
+                <div class="card">
+                    <h6 class="card-header">Email confirmation</h6>
+                    @{
+                        if (Model.IsConfirmed)
+                        {
+                            <div class="display-3 card-body lead text-center text-success">Email confirmed successfully</div>
+                            <div class="card-footer">
+                                <a class="btn btn-primary" href="/app" role="button">Go to site</a>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="display-3 card-body lead text-center text-danger">Error in email confirmation</div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</app>
+
+
+<script src="/app/js/jquery-3.4.1.min.js"></script>
+<script src="/app/js/bootstrap.bundle.js"></script>
+</body>
+</html>

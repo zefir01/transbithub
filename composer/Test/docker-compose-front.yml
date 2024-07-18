@@ -1,0 +1,215 @@
+version: '3.8'
+#
+services:
+
+  envoy:
+    restart: always
+    image: ${ENVOY_TAG}
+    extra_hosts:
+      - "tor:10.3.0.129"
+      - "tor:10.3.0.133"
+      - "tor:10.3.0.137"
+      - "tor:10.3.0.141"
+      - "tor:10.3.0.145"
+      - "tor:10.3.0.149"
+      - "tor:10.3.0.153"
+      - "tor:10.3.0.157"
+      - "tor:10.3.0.161"
+      - "tor:10.3.0.165"
+      - "tor:10.3.0.169"
+      - "tor:10.3.0.173"
+      - "tor:10.3.0.177"
+      - "tor:10.3.0.181"
+      - "tor:10.3.0.185"
+      - "tor:10.3.0.189"
+      - "tor:10.3.0.193"
+      - "tor:10.3.0.197"
+      - "tor:10.3.0.201"
+      - "tor:10.3.0.205"
+      - "tor:10.3.0.209"
+      - "tor:10.3.0.213"
+      - "tor:10.3.0.217"
+      - "tor:10.3.0.221"
+      - "tor:10.3.0.225"
+      - "tor:10.3.0.229"
+      - "tor:10.3.0.233"
+      - "tor:10.3.0.237"
+      - "tor:10.3.0.241"
+      - "tor:10.3.0.245"
+      - "tor:10.3.0.249"
+    configs:
+      - source: envoy-test-transbithub-yaml
+        target: /etc/envoy/envoy.yaml
+      - source: test-transbithub-com-pem
+        target: /etc/envoy/test.transbithub.com.pem
+      - source: test-transbithub-com-key
+        target: /etc/envoy/test.transbithub.com.key
+      - source: api-test-transbithub-com-pem
+        target: /etc/envoy/api.test.transbithub.com.pem
+      - source: api-test-transbithub-com-key
+        target: /etc/envoy/api.test.transbithub.com.key
+      - source: docs-ru-test-transbithub-com-pem
+        target: /etc/envoy/docs-ru.test.transbithub.com.pem
+      - source: docs-ru-test-transbithub-com-key
+        target: /etc/envoy/docs-ru.test.transbithub.com.key
+      - source: mail-test-transbithub-com-pem
+        target: /etc/envoy/mail.test.transbithub.com.pem
+      - source: mail-test-transbithub-com-key
+        target: /etc/envoy/mail.test.transbithub.com.key
+    environment:
+      - "ENVOY_UID=0"
+    ports:
+      - target: 80
+        published: 80
+        protocol: tcp
+        mode: host
+      - target: 443
+        published: 443
+        protocol: tcp
+        mode: host
+      - target: 9735
+        published: 9735
+        protocol: tcp
+        mode: host
+      - target: 9901
+        published: 9901
+        protocol: tcp
+        mode: host
+      - target: 1001
+        published: 1001
+        protocol: tcp
+        mode: host
+      - target: 8100
+        published: 8100
+        protocol: tcp
+        mode: host
+    depends_on:
+      - front
+      - docs-static
+      - wordpress
+
+  mail:
+    restart: always
+    image: ${FRONT_MAIL_TAG}
+    ports:
+      - target: 25
+        published: 25
+        protocol: tcp
+        mode: host
+    configs:
+      - source: exim-front-conf
+        target: /etc/exim4/exim.conf
+      - source: test-transbithub-com-public-dkim
+        target: /etc/exim4/test.transbithub.com.public
+      - source: test-transbithub-com-key-dkim
+        target: /etc/exim4/test.transbithub.com.key
+
+
+  squid:
+    restart: always
+    image: sameersbn/squid
+    ports:
+      - "3128:3128"
+    configs:
+      - source: squid-conf
+        target: /etc/squid/squid.conf
+
+  front:
+    restart: always
+    image: ${FRONT_TAG}
+    deploy:
+      endpoint_mode: dnsrr
+
+
+  landing:
+    restart: always
+    image: ${LANDING_TAG}
+    environment:
+      DATABASE_URL: 'postgresql://globalbitcoins:globalbitcoins@postgres-aggregator:5432/aggregator?schema=public'
+    deploy:
+      endpoint_mode: dnsrr
+
+  docs-static:
+    restart: always
+    image: ${DOCS_TAG}
+    deploy:
+      endpoint_mode: dnsrr
+
+
+  postgres-aggregator:
+    image: bitnami/postgresql:13-debian-10
+    restart: always
+    environment:
+      POSTGRESQL_POSTGRES_PASSWORD: "Batman01"
+      POSTGRESQL_REPLICATION_MODE: "master"
+      POSTGRESQL_REPLICATION_USER: "repl_user"
+      POSTGRESQL_REPLICATION_PASSWORD: "repl_password"
+      ALLOW_EMPTY_PASSWORD: "no"
+      TZ: "Etc/UTC"
+      POSTGRESQL_USERNAME: "globalbitcoins"
+      POSTGRESQL_PASSWORD: "globalbitcoins"
+      POSTGRESQL_DATABASE: "aggregator"
+    volumes:
+      - postgres_aggregator:/bitnami/postgresql
+    configs:
+      - source: postgres-aggregator
+        target: /bitnami/postgresql/conf/postgresql.conf
+    ports:
+      - "5432:5432"
+
+  aggregator:
+    restart: always
+    image: ${AGGREGATOR_TAG}
+    stop_grace_period: 5m
+    environment:
+      MIGRATE: "true"
+      LOG_LEVEL: "Debug"
+      DATA_HOST: "postgres-aggregator"
+      DATA_PORT: "5432"
+      DATA_DB: "aggregator"
+      DATA_USER: "globalbitcoins"
+      DATA_PASS: "globalbitcoins"
+      TZ: "Etc/UTC"
+      ENVIRONMENT: "Debug"
+      PAXFUL_KEY: "9uV3gqnpm8E7g8yjc3ZjpjEh47036CzD"
+      PAXFUL_SECRET: "wBLiZxgWikR66jRvQ8ITcgxeHhRJTdpw"
+      BZ_EMAIL: "natarist@protonmail.com"
+      BZ_KEY: '{"kty":"EC","alg":"ES256","crv":"P-256","x":"fZ-yU2HnTvhnxsBOOStw2xGi45EEp19BoA-n_X1LWF4","y":"bQlXXxfyDj02dRU-XnNvLbinD3EjgGR6rY-jHjVnXc8","d":"2I2vQ2u5S_o5w8DjhWcHkGHMiEd0TktD_5iFkgAlR-g"}'
+    depends_on:
+      - postgres-aggregator
+
+
+
+configs:
+  envoy-test-transbithub-yaml:
+    file: ./envoy/envoy.test.transbithub.yaml
+  test-transbithub-com-pem:
+    file: ./envoy/test.transbithub.com.pem
+  test-transbithub-com-key:
+    file: ./envoy/test.transbithub.com.key
+  api-test-transbithub-com-pem:
+    file: ./envoy/api.test.transbithub.com.pem
+  api-test-transbithub-com-key:
+    file: ./envoy/api.test.transbithub.com.key
+  docs-ru-test-transbithub-com-pem:
+    file: ./envoy/docs-ru.test.transbithub.com.pem
+  docs-ru-test-transbithub-com-key:
+    file: ./envoy/docs-ru.test.transbithub.com.key
+  exim-front-conf:
+    file: ./mail/exim-front.conf
+  test-transbithub-com-public-dkim:
+    file: ./mail/test.transbithub.com.public
+  test-transbithub-com-key-dkim:
+    file: ./mail/test.transbithub.com.key
+  mail-test-transbithub-com-pem:
+    file: ./envoy/mail.test.transbithub.com.pem
+  mail-test-transbithub-com-key:
+    file: ./envoy/mail.test.transbithub.com.key
+  squid-conf:
+    file: ./squid.conf
+  postgres-aggregator:
+    file: ./postgres/postgresql-aggregator.conf
+
+
+volumes:
+  postgres_aggregator:

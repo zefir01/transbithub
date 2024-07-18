@@ -1,0 +1,39 @@
+{
+  "profiles": {
+    "GrpcService1": {
+      "commandName": "Project",
+      "launchBrowser": false,
+      "applicationUrl": "https://localhost:5001",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "DATA_HOST": "postgres-data",
+        "DATA_PORT": "5432",
+        "DATA_DB": "globalbitcoins_data",
+        "DATA_USER": "globalbitcoins",
+        "DATA_PASS": "globalbitcoins",
+        "NATS_URL": "nats://nats:4222",
+        "RATES_TOKEN": "c8d9aeaba5344ac99a9386e3d314d92e",
+        "PROXY_USER": "jfszfb",
+        "PROXY_PASS": "AMhIKVNR04",
+        "PROXY_URL": "http://45.91.54.136:24531",
+        "SMTP_SERVER": "mail",
+        "SMTP_PORT": "25",
+        "SMTP_USER": "support",
+        "SMTP_PASS": "batman",
+        "SMTP_FROM": "support@envoy.docker",
+        "AUTH_HOST": "localhost",
+        "AUTH_HTTP_PORT": "5001",
+        "AUTH_HTTP2_PORT": "5002",
+        "BTC_SERVICE_URL": "http://localhost:50060",
+        "SITE_NAME": "fancrypto.ru",
+        "TELEGRAM_BOT_NAME": "@fancrypto_bot",
+        "DEBUG_BALANCES": "true",
+        "MIGRATE": "true",
+        "REDIS_URL": "redis:6379",
+        "TZ": "Etc/UTC",
+        "LOG_LEVEL": "Warning",
+        "LND_URL": "lnd:10009"
+      }
+    }
+  }
+}

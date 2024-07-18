@@ -1,0 +1,8 @@
+FROM node:latest
+RUN apt-get update && apt-get install -y tini && apt-get clean all
+WORKDIR /opt
+COPY . .
+COPY start-prod.sh /start.sh
+EXPOSE 3000
+ENTRYPOINT ["tini", "--"]
+CMD ["/start.sh"]

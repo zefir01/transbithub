@@ -1,0 +1,48 @@
+$TTL    604800
+@       IN      SOA     ns1.transbithub.com. root.transbithub.com. (
+                              2         ; Serial
+                          86400         ; Refresh
+                          86400         ; Retry
+                        2419200         ; Expire
+                          86400)        ; Negative Cache TTL
+;
+@                               IN  NS      ns1.transbithub.com.
+ns1                             IN  A       31.13.195.53
+@                               IN  MX      10 mail.transbithub.com.
+;also list other computers
+www                             IN  A       31.13.195.53
+mail                            IN  A       31.13.195.53
+@                               IN  A       31.13.195.53
+api                             IN  A       31.13.195.53
+
+@ 3600                          IN  TXT     "v=spf1 +a +mx -all"
+;@ 3600                          IN  TXT     "google-site-verification=QbhAih7UYk3pwO1tHgpM9Ktb3oPB6US_IakHTojntcw"
+email._domainkey                 IN  TXT     ( "v=DKIM1; k=rsa; " "p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDqACul1Hrut0bLxRHXBc2vvakq"
+                                               "l0u8Cq+XMw5/AA9lRLslBpG/jQ1KQQvaUIpRcZIwafVxYX6TJL+pNZaW5k+gNHhJ"
+                                               "EUKupJAt9hMniSfaNbRgqZ8zLD2Jef2I3rK+9wzp3GyyCa8EYjUXnwOMC/NgTrja"
+                                               "cdJnlj6X0AJ8IK4HDQIDAQAB" ) ;
+
+
+test                            IN  A       31.13.195.60
+test                            IN  MX      10 mail.test.transbithub.com.
+www.test                        IN  A       31.13.195.60
+mail.test                       IN  A       31.13.195.60
+api.test                        IN  A       31.13.195.60
+test 3600                       IN  TXT     "v=spf1 +a +mx -all"
+email._domainkey.test           IN  TXT     ( "v=DKIM1; k=rsa; " "p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCkXPl737JBiNBvglSaMCY1Tl1J"
+                                                                "JpCLtj7yfmsZ5xLaQkf+0RZNnbbtwHhVoQ2YoahFImLSripKzCowNe0WZyAWOyBf"
+                                                                "7IeRwWBxgL/U8us21BEiLk7Z5WIlz3x2aMQPADp6tLz66BYTf/D5yQ3Bf5J6WK7j"
+                                                                "wsiiSyqKxLcop6bSrwIDAQAB" ) ;
+yandex-verification             IN  TXT     "9e90c0fec313d01f"
+_dmarc                          IN  TXT     "v=DMARC1; p=quarantine;"
+
+_acme-challenge.test            IN  TXT     "vuPVe6HDtxNh8_X5FZrBNCxbXx7UfcA5Bh9ylryavYM"
+_acme-challenge.api.test        IN  TXT     "0yrOo3_WfFetf-iOTvQZ4DTzB8nUB7uhHaLj1khZp_k"
+_acme-challenge.mail.test       IN  TXT     "ykAVVqrwQzwcMI0ftksfVy7uTtmIVjjj7I-N4LiDJjs"
+
+_acme-challenge.mail            IN  TXT     "sy9CtDo4obPkG34nUU_j8WsY-Z9-kE7DuQFaArhv73Y"
+_acme-challenge                 IN  TXT     "q7WDptpZ-QjURLnMHd2zLj44XbzWWsKQfvOzIpNQPKU"
+_acme-challenge.api             IN  TXT     "2pRSKJTfYw5PLAHtBSAjW_lE2Di4zZbvFPsP3p2bBjs"
+
+google-site-verification	IN  TXT	    "QbhAih7UYk3pwO1tHgpM9Ktb3oPB6US_IakHTojntcw"
+

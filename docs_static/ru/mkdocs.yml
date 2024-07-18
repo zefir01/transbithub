@@ -1,0 +1,56 @@
+site_name: transbithub.com
+site_url: https://transbithub.com/docs-static
+site_dir: docs-static
+extra_javascript:
+  - ym.js
+markdown_extensions:
+  - meta
+
+theme:
+    name: material
+
+nav:
+  - Основное:
+      - Описание приложения: main/index.md
+      - Промисы: main/promises.md
+      - Кошелек: main/walletCommon.md
+  - Торговля биткоинами:
+      - Общие принципы: trading/trading.md
+      - Поиск объявлений: trading/searchAd.md
+      - Создание сделки: trading/createDeal.md
+      - Сделка: trading/deal.md
+      - Создание объявления: trading/createAd.md
+      - Авто Цена: trading/autoPrice.md
+  - Рукаводство покупателя:
+      - Общее описание: buyer/buyerCommon.md
+      - Начало оплаты: buyer/findInvoice.md
+      - Оплата через сделку: buyer/payByDeal.md
+      - Результат оплаты: buyer/payComplete.md
+      - Помощник:
+          - Общее описание: buyer/assistant/common.md
+          - Покупка биткоинов: buyer/assistant/buyBitcoins.md
+          - Оплата счета: buyer/assistant/payInvoice.md
+          - Использование Промиса: buyer/assistant/usePromise.md
+  - Руководство продавца:
+      - Счета: invoices/invoices.md
+      - Общее описание: invoices/sellerCommon.md
+      - Создание счета: invoices/invoiceCreate.md
+      - Создание и управление секретами: invoices/createSecrets.md
+      - Связь с покупателем: invoices/buyerConversation.md
+      - Возвраты платежей: invoices/refunds.md
+      - Интеграция: invoices/webhooks.md
+  - API:
+      - Общие сведения: api/common.md
+      - Создание токена: api/createToken.md
+      - Авторизация: api/auth.md
+      - Объявления: api/ads.md
+      - Сделки: api/deals.md
+      - События: api/events.md
+      - Счета: api/invoices.md
+      - Платежи по счетам: api/invoicePayments.md
+      - Изображения: api/images.md
+      - Кошелек: api/btcWallet.md
+      - Пользователи: api/users.md
+      - Промисы: api/promises.md
+      - Вебхуки: api/webhooks.md
+      - Остальное: api/other.md

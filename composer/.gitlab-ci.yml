@@ -1,0 +1,109 @@
+image: $CI_REGISTRY/root/temp-images/composer-updater:latest
+
+
+stages:
+ - deploy_test
+ - deploy_prod
+
+deploy_test:front:
+  stage: deploy_test
+  when: manual
+  timeout: 20 minutes
+  script:
+    - git clone http://gitlab-ci-token:$VERSIONS_TOKEN@gitlab:8100/root/versions.git
+    - "export $(sed '/^#/d' versions/test.env)"
+    - cp -R Test build
+    - deployer.py -f Test/docker-compose-front.yml -s front-test -c front-test -o build/docker-compose-front.yml
+    - mkdir ~/.ssh && chmod 0700 ~/.ssh
+    - >
+      echo "Host $front_test_ip
+        StrictHostKeyChecking no" > ~/.ssh/config
+    - echo $docker_context_ssh_publick_key | base64 -d > ~/.ssh/id_rsa.pub
+    - echo $docker_context_ssh_private_key | base64 -d > ~/.ssh/id_rsa
+    - chmod 0600 ~/.ssh/id_rsa.pub
+    - chmod 0600 ~/.ssh/id_rsa
+    - unset DOCKER_HOST
+    - docker context create front-test --docker "host=ssh://root@$front_test_ip"
+    - docker context use front-test
+    - cd build
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker stack deploy --prune --with-registry-auth -c docker-compose-front.yml front-test
+    - docker logout $CI_REGISTRY
+
+deploy_prod:front:
+  stage: deploy_prod
+  when: manual
+  timeout: 20 minutes
+  script:
+    - git clone http://gitlab-ci-token:$VERSIONS_TOKEN@gitlab:8100/root/versions.git
+    - "export $(sed '/^#/d' versions/prod.env)"
+    - cp -R Prod build
+    - deployer.py -f Prod/docker-compose-front.yml -s front-prod -c front -o build/docker-compose-front.yml
+    - mkdir ~/.ssh && chmod 0700 ~/.ssh
+    - >
+      echo "Host $front_ip
+        StrictHostKeyChecking no" > ~/.ssh/config
+    - echo $docker_context_ssh_publick_key | base64 -d > ~/.ssh/id_rsa.pub
+    - echo $docker_context_ssh_private_key | base64 -d > ~/.ssh/id_rsa
+    - chmod 0600 ~/.ssh/id_rsa.pub
+    - chmod 0600 ~/.ssh/id_rsa
+    - unset DOCKER_HOST
+    - docker context create front --docker "host=ssh://root@$front_ip"
+    - docker context use front
+    - cd build
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker stack deploy --prune --with-registry-auth -c docker-compose-front.yml front-prod
+    - docker logout $CI_REGISTRY
+
+
+deploy_test:master:
+  stage: deploy_test
+  when: manual
+  timeout: 20 minutes
+  script:
+    - git clone http://gitlab-ci-token:$VERSIONS_TOKEN@gitlab:8100/root/versions.git
+    - "export $(sed '/^#/d' versions/test.env)"
+    - cp -R Test build
+    - deployer.py -f Test/docker-compose-master.yml -s test -c master -o build/docker-compose-master.yml
+    - mkdir ~/.ssh && chmod 0700 ~/.ssh
+    - >
+      echo "Host $master_ip
+        StrictHostKeyChecking no" > ~/.ssh/config
+    - echo $docker_context_ssh_publick_key | base64 -d > ~/.ssh/id_rsa.pub
+    - echo $docker_context_ssh_private_key | base64 -d > ~/.ssh/id_rsa
+    - chmod 0600 ~/.ssh/id_rsa.pub
+    - chmod 0600 ~/.ssh/id_rsa
+    - unset DOCKER_HOST
+    - docker context create test --docker "host=ssh://root@$master_ip"
+    - docker context use test
+    - cd build
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker stack deploy --prune --with-registry-auth -c docker-compose-master.yml test
+    - docker logout $CI_REGISTRY
+
+
+deploy_prod:master:
+  stage: deploy_prod
+  when: manual
+  timeout: 20 minutes
+  script:
+    - git clone http://gitlab-ci-token:$VERSIONS_TOKEN@gitlab:8100/root/versions.git
+    - "export $(sed '/^#/d' versions/prod.env)"
+    - cp -R Prod build
+    - deployer.py -f Prod/docker-compose-master.yml -s prod -c master -o build/docker-compose-master.yml
+    - mkdir ~/.ssh && chmod 0700 ~/.ssh
+    - >
+      echo "Host $master_ip
+        StrictHostKeyChecking no" > ~/.ssh/config
+    - echo $docker_context_ssh_publick_key | base64 -d > ~/.ssh/id_rsa.pub
+    - echo $docker_context_ssh_private_key | base64 -d > ~/.ssh/id_rsa
+    - chmod 0600 ~/.ssh/id_rsa.pub
+    - chmod 0600 ~/.ssh/id_rsa
+    - unset DOCKER_HOST
+    - docker context create prod --docker "host=ssh://root@$master_ip"
+    - docker context use prod
+    - cd build
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker stack deploy --prune --with-registry-auth -c docker-compose-master.yml prod
+    - docker logout $CI_REGISTRY
+

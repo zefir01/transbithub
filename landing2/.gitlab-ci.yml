@@ -1,0 +1,105 @@
+stages:
+  - docker
+  - deploy
+
+variables:
+  IMAGE_TAG_TEST: $CI_REGISTRY_IMAGE:test-$CI_PIPELINE_ID
+  IMAGE_TAG_PROD: $CI_REGISTRY_IMAGE:prod-$CI_PIPELINE_ID
+  COPMPOSER_UPDATER_TAG: $CI_REGISTRY/root/temp-images/composer-updater:latest
+
+docker_test:
+  stage: docker
+  image: docker
+  script:
+    - rm -rf .git
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build -f Dockerfile.test -t $IMAGE_TAG_TEST .
+    - docker push $IMAGE_TAG_TEST
+
+docker_prod:
+  stage: docker
+  image: docker
+  script:
+    - rm -rf .git
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build -f Dockerfile.prod -t $IMAGE_TAG_PROD .
+    - docker push $IMAGE_TAG_PROD
+
+
+update_image_test:
+  stage: deploy
+  image: $COPMPOSER_UPDATER_TAG
+  variables:
+    STACK: front-test
+    SERVICE: landing
+    IMAGE_TAG_NAME: LANDING_TAG
+    GIT_STRATEGY: none
+  #    IMAGE_TAG: "$IMAGE_TAG_TEST"
+  when: manual
+  timeout: 3 hours
+  retry: 2
+  script:
+    - export IMAGE_TAG=$IMAGE_TAG_TEST
+    - mkdir ~/.ssh && chmod 0700 ~/.ssh
+    - >
+      echo "Host $front_test_ip
+        StrictHostKeyChecking no" > ~/.ssh/config
+    - echo $docker_context_ssh_publick_key | base64 -d > ~/.ssh/id_rsa.pub
+    - echo $docker_context_ssh_private_key | base64 -d > ~/.ssh/id_rsa
+    - chmod 0600 ~/.ssh/id_rsa.pub
+    - chmod 0600 ~/.ssh/id_rsa
+    - docker context create front-test --docker "host=ssh://root@$front_test_ip"
+    - docker --context front-test login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker --context front-test service update --with-registry-auth --image $IMAGE_TAG ${STACK}_$SERVICE
+
+    - git clone http://gitlab-ci-token:$VERSIONS_TOKEN@gitlab:8100/root/versions.git
+    - cd versions
+    - sed -i "s|^$IMAGE_TAG_NAME=.*$|$IMAGE_TAG_NAME=$IMAGE_TAG|g" test.env
+    - git add -A
+    - git config --global user.email "$CI_PROJECT_NAME@gitlab" && git config --global user.name $CI_PROJECT_NAME
+    - "git commit -m \"Update $CI_PROJECT_TITLE with image: $IMAGE_TAG\""
+    - git push
+    - docker --context front-test logout $CI_REGISTRY
+
+
+update_image_prod:
+  stage: deploy
+  image: $COPMPOSER_UPDATER_TAG
+  variables:
+    STACK: front-prod
+    SERVICE: landing
+    IMAGE_TAG_NAME: LANDING_TAG
+    GIT_STRATEGY: none
+  #    IMAGE_TAG: "$IMAGE_TAG_TEST"
+  when: manual
+  timeout: 3 hours
+  retry: 2
+  script:
+    - export IMAGE_TAG=$IMAGE_TAG_PROD
+    - mkdir ~/.ssh && chmod 0700 ~/.ssh
+    - >
+      echo "Host $front_ip
+        StrictHostKeyChecking no
+      Host $master_ip
+        StrictHostKeyChecking no" > ~/.ssh/config
+    - echo $docker_context_ssh_publick_key | base64 -d > ~/.ssh/id_rsa.pub
+    - echo $docker_context_ssh_private_key | base64 -d > ~/.ssh/id_rsa
+    - chmod 0600 ~/.ssh/id_rsa.pub
+    - chmod 0600 ~/.ssh/id_rsa
+    - docker context create front --docker "host=ssh://root@$front_ip"
+    - docker --context front login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker --context front service update --with-registry-auth --image $IMAGE_TAG ${STACK}_$SERVICE
+
+    - export STACK=prod
+    - docker context create master --docker "host=ssh://root@$master_ip"
+    - docker --context master login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker --context master service update --with-registry-auth --image $IMAGE_TAG ${STACK}_$SERVICE
+
+    - git clone http://gitlab-ci-token:$VERSIONS_TOKEN@gitlab:8100/root/versions.git
+    - cd versions
+    - sed -i "s|^$IMAGE_TAG_NAME=.*$|$IMAGE_TAG_NAME=$IMAGE_TAG|g" prod.env
+    - git add -A
+    - git config --global user.email "$CI_PROJECT_NAME@gitlab" && git config --global user.name $CI_PROJECT_NAME
+    - "git commit -m \"Update $CI_PROJECT_TITLE with image: $IMAGE_TAG\""
+    - git push
+    - docker --context front logout $CI_REGISTRY
